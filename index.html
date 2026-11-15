@@ -5,433 +5,744 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>qiuqiuのapi 🍎🍏</title>
 <style>
-/* 默认白天模式 */
-:root{
-    --g:#52c41a; --gl:#f6ffed; --r:#ff4d4f; --rl:#fff1f0; --y:#faad14; --yl:#fffbe6; --b:#12b7f5; --bl:#e6f7ff;
-    --t:#333; --tl:#888; --bg:#f7f9f7; --cbg:#fff; --border:#f0f0f0; --modal-bg:#fff; --input-bg:#fafafa;
-    --shadow:rgba(0,0,0,.04);
-}
-/* 夜间模式配色（柔和深灰蓝，不刺眼） */
-body.dark-mode{
-    --g:#49aa26; --gl:#1a2e16; --r:#e85a5a; --rl:#2e1616; --y:#e0a11c; --yl:#2e2516; --b:#269bd4; --bl:#16272e;
-    --t:#d1d5db; --tl:#9ca3af; --bg:#111827; --cbg:#1f2937; --border:#374151; --modal-bg:#1f2937; --input-bg:#374151;
-    --shadow:rgba(0,0,0,.3);
-}
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;-webkit-tap-highlight-color:transparent;}
-body{background-color:var(--bg);background-image:radial-gradient(circle at 0% 0%,rgba(82,196,26,.1) 0,transparent 40%),radial-gradient(circle at 100% 100%,rgba(255,77,79,.1) 0,transparent 40%);background-attachment:fixed;color:var(--t);padding:15px;padding-bottom:100px;min-height:100vh;transition:background-color .3s,color .3s;}
-.top-bar{background:rgba(255,255,255,.05);backdrop-filter:blur(10px);border-radius:20px;padding:15px;margin-bottom:15px;box-shadow:0 4px 12px var(--shadow);border:1px solid var(--border);position:relative;}
-h1{font-size:22px;font-weight:900;text-align:center;color:var(--r);margin-bottom:10px}
-.theme-btn{position:absolute;right:15px;top:15px;background:transparent;border:none;font-size:20px;cursor:pointer;padding:5px;}
+    /* ====== 核心变量：白天模式 ====== */
+    :root {
+        --g: #52c41a; --gl: #f6ffed; 
+        --r: #ff4d4f; --rl: #fff1f0; 
+        --y: #faad14; --yl: #fffbe6; 
+        --b: #12b7f5; --bl: #e6f7ff;
+        --t: #333333; --tl: #888888; 
+        --bg: #f7f9f7; --cbg: #ffffff; 
+        --border: #f0f0f0; --input-bg: #fafafa;
+        --shadow: rgba(0, 0, 0, 0.04);
+    }
 
-/* 看板点击提示 */
-.dashboard{display:flex;justify-content:space-around;text-align:center;font-size:12px;color:var(--tl)}
-.dashboard span{display:block;font-size:16px;font-weight:bold;color:var(--t);margin-top:2px}
-.dashboard .gt{color:var(--g)}
-.dashboard .clickable{cursor:pointer;padding:5px;border-radius:8px;transition:background .2s;}
-.dashboard .clickable:active{background:rgba(128,128,128,.1);}
+    /* ====== 核心变量：夜间模式 ====== */
+    body.dark-mode {
+        --g: #49aa26; --gl: #1a2e16; 
+        --r: #e85a5a; --rl: #2e1616; 
+        --y: #e0a11c; --yl: #2e2516; 
+        --b: #269bd4; --bl: #16272e;
+        --t: #d1d5db; --tl: #9ca3af; 
+        --bg: #111827; --cbg: #1f2937; 
+        --border: #374151; --input-bg: #374151;
+        --shadow: rgba(0, 0, 0, 0.3);
+    }
 
-.toolbar{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap}
-.search-box{flex:1;min-width:120px;position:relative}
-.search-box input{width:100%;padding:10px 15px 10px 35px;border-radius:12px;border:1px solid var(--border);background:var(--cbg);color:var(--t);font-size:14px;outline:none}
-.search-box::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px}
-.btn-f,.btn-r,.btn-s{padding:10px 15px;border-radius:12px;font-size:13px;font-weight:bold;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;background:var(--cbg);color:var(--t);border:1px solid var(--border);transition:all .2s;white-space:nowrap}
-.btn-f.ag{background:var(--g);color:#fff;border-color:var(--g)}
-.btn-f.ay{background:var(--y);color:#fff;border-color:var(--y)}
-.btn-r{background:var(--rl);color:var(--r);border-color:var(--r)}
-.btn-s{background:var(--bl);color:var(--b);border-color:var(--b)}
-.btn-f:active,.btn-r:active,.btn-s:active{transform:scale(.95)}
-.fab{position:fixed;bottom:30px;right:20px;width:60px;height:60px;border-radius:50%;background:var(--r);color:#fff;font-size:30px;line-height:60px;text-align:center;box-shadow:0 6px 16px rgba(255,77,79,.4);border:3px solid var(--cbg);cursor:pointer;z-index:99;transition:transform .2s}
-.fab:active{transform:scale(.9)}
-.card{background:var(--cbg);border-radius:20px;margin-bottom:15px;box-shadow:0 4px 15px var(--shadow);border:1px solid var(--border);overflow:hidden;position:relative;transition:transform .2s,opacity .2s,box-shadow .2s}
-.card::before{content:'';position:absolute;top:0;left:0;width:6px;height:100%;background:var(--g);transition:background .3s}
-.card.uc::before{background:var(--r)}
-.card-header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 18px 25px;cursor:grab;user-select:none}
-.site-name{font-size:18px;font-weight:800;color:var(--t)}
-.toggle-icon{font-size:22px}
-.card-body{padding:0 20px 20px 25px;display:block}
-.card.collapsed .card-body{display:none}
-.link-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;border-bottom:1px dashed var(--border);padding-bottom:12px}
-.site-link{font-size:13px;color:var(--g);text-decoration:none;background:var(--gl);padding:6px 12px;border-radius:8px;font-weight:bold}
-.btn-copy{background:var(--input-bg);border:1px solid var(--border);color:var(--tl);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;white-space:nowrap}
-.info-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:10px}
-.info-label{color:var(--tl);font-size:13px;font-weight:bold}
-.balance{color:var(--r);font-weight:900;font-size:18px}
-.switch-container{display:flex;align-items:center;gap:8px;cursor:pointer}
-.switch-text{font-size:13px;font-weight:bold}
-.switch-text.un{color:var(--r)}
-.switch-text.si{color:var(--g)}
-.toggle-switch{position:relative;width:44px;height:24px;background-color:#666;border-radius:24px;transition:.3s}
-.toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background-color:#fff;border-radius:50%;transition:.3s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
-.toggle-switch.active{background-color:var(--g)}
-.toggle-switch.active::after{transform:translateX(20px)}
-.recharge-box{background:var(--yl);border:1px solid var(--y);border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--y)}
-.recharge-title{font-weight:bold;margin-bottom:6px;border-bottom:1px dashed var(--y);padding-bottom:6px;display:flex;justify-content:space-between}
-.recharge-list{display:flex;flex-direction:column;gap:4px}
-.recharge-item{display:flex;justify-content:space-between;font-size:12px}
-.recharge-total{font-weight:bold;color:var(--r);font-size:14px}
-.url-box{background:var(--input-bg);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.url-info{display:flex;flex-direction:column;flex-grow:1;overflow:hidden}
-.url-label{font-size:11px;color:var(--tl);font-weight:bold;margin-bottom:2px}
-.url-text{font-size:12px;color:var(--t);word-break:break-all;font-family:monospace}
-.auth-box{background:var(--bl);border:1px dashed var(--b);border-radius:12px;padding:10px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
-.auth-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.auth-info{display:flex;flex-direction:column;flex-grow:1;overflow:hidden}
-.auth-label{font-size:11px;color:var(--b);font-weight:bold;margin-bottom:2px}
-.auth-text{font-size:13px;color:var(--t);word-break:break-all;font-family:monospace;font-weight:bold}
-.btn-eye{background:transparent;border:none;font-size:16px;cursor:pointer;padding:0 5px}
-.qq-box{background:var(--bl);border:1px dashed #91d5ff;border-radius:12px;padding:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.qq-info{display:flex;flex-direction:column;flex-grow:1;overflow:hidden}
-.qq-label{font-size:11px;color:var(--b);font-weight:bold;margin-bottom:2px;display:flex;align-items:center;gap:4px}
-.qq-text{font-size:14px;color:var(--t);font-weight:bold;font-family:monospace}
-.model-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-.model-item{background:var(--gl);border:1px solid var(--g);border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center}
-.model-name{font-size:13px;color:var(--g);font-weight:bold}
-.model-price{font-size:12px;color:#fff;font-weight:bold;background:var(--g);padding:2px 8px;border-radius:6px}
-.remark-box{background:var(--input-bg);border:1px dashed var(--border);border-radius:12px;padding:10px;margin-bottom:12px}
-.remark-label{font-size:11px;color:var(--tl);font-weight:bold;margin-bottom:4px}
-.remark-text{font-size:12px;color:var(--tl);line-height:1.5;word-break:break-all}
-.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
-.btn-small{background:var(--cbg);border:1px solid var(--border);color:var(--tl);padding:6px 16px;border-radius:10px;font-size:13px;font-weight:bold;cursor:pointer}
-.btn-edit{border-color:var(--g);color:var(--g)}
-.btn-delete{border-color:var(--r);color:var(--r)}
+    /* ====== 基础布局 ====== */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { 
+        background-color: var(--bg); 
+        background-image: radial-gradient(circle at 0% 0%, rgba(82,196,26,.1) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,77,79,.1) 0, transparent 40%);
+        background-attachment: fixed;
+        color: var(--t); padding: 15px; padding-bottom: 100px; min-height: 100vh; 
+        transition: background-color 0.3s, color 0.3s; 
+    }
 
-/* 弹窗通用 */
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;justify-content:center;align-items:flex-end}
-.modal-content{background:var(--modal-bg);color:var(--t);width:100%;max-height:90vh;border-radius:24px 24px 0 0;padding:25px;overflow-y:auto;animation:slideUp .3s;border-top:1px solid var(--border);}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.form-group{margin-bottom:15px}
-.form-group label{display:block;font-size:13px;color:var(--tl);margin-bottom:6px;font-weight:bold}
-.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:var(--input-bg);color:var(--t)}
-.form-group input:focus{border-color:var(--g);}
-.dynamic-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
-.input-model{flex:2}
-.input-price{flex:1}
-.btn-remove-model{background:var(--rl);color:var(--r);border:none;padding:0 15px;border-radius:10px;font-weight:bold;cursor:pointer;height:42px}
-.btn-add-model{background:var(--gl);color:var(--g);border:1px dashed var(--g);padding:10px;border-radius:10px;font-size:13px;font-weight:bold;width:100%;cursor:pointer;margin-bottom:15px}
-.modal-actions{display:flex;gap:12px;margin-top:20px}
-.btn-cancel{flex:1;background:var(--input-bg);color:var(--t);border:1px solid var(--border);padding:14px;border-radius:12px;font-size:15px;font-weight:bold}
-.btn-save{flex:2;background:var(--g);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:bold}
-.empty-state{text-align:center;color:var(--tl);margin-top:50px;font-size:14px}
-.hidden{display:none!important}
-.dragging{opacity:.5;transform:scale(1.02);box-shadow:0 10px 25px var(--shadow);border:2px dashed var(--g)}
+    /* ====== 顶部看板 ====== */
+    .top-bar { background: var(--cbg); border-radius: 20px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px var(--shadow); border: 1px solid var(--border); position: relative; }
+    h1 { font-size: 22px; font-weight: 900; text-align: center; color: var(--r); margin-bottom: 10px; }
+    .theme-btn { position: absolute; right: 15px; top: 15px; background: transparent; border: none; font-size: 20px; cursor: pointer; padding: 5px; }
+    
+    .dashboard { display: flex; justify-content: space-around; text-align: center; font-size: 12px; color: var(--tl); }
+    .dashboard span { display: block; font-size: 16px; font-weight: bold; color: var(--t); margin-top: 2px; }
+    .dashboard .gt { color: var(--g); }
+    .dashboard .clickable { cursor: pointer; padding: 5px; border-radius: 8px; transition: background 0.2s; }
+    .dashboard .clickable:active { background: rgba(128, 128, 128, 0.1); }
 
-/* 账单中心专属样式 */
-.bill-row {display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px dashed var(--border);font-size:14px;}
-.bill-total {font-size:20px; font-weight:900; color:var(--r); text-align:center; margin:15px 0; background:var(--rl); padding:15px; border-radius:12px;}
+    /* ====== 工具栏 ====== */
+    .toolbar { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 120px; position: relative; }
+    .search-box input { width: 100%; padding: 10px 15px 10px 35px; border-radius: 12px; border: 1px solid var(--border); background: var(--cbg); color: var(--t); font-size: 14px; outline: none; }
+    .search-box::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+    
+    .btn-f, .btn-r, .btn-s { padding: 10px 15px; border-radius: 12px; font-size: 13px; font-weight: bold; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--cbg); color: var(--t); transition: all 0.2s; white-space: nowrap; }
+    .btn-f.ag { background: var(--g); color: #fff; border-color: var(--g); }
+    .btn-f.ay { background: var(--y); color: #fff; border-color: var(--y); }
+    .btn-r { background: var(--rl); color: var(--r); border-color: var(--r); }
+    .btn-s { background: var(--bl); color: var(--b); border-color: var(--b); }
+    .btn-f:active, .btn-r:active, .btn-s:active { transform: scale(0.95); }
+
+    /* ====== 悬浮按钮 ====== */
+    .fab { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--r); color: #fff; font-size: 30px; line-height: 60px; text-align: center; box-shadow: 0 6px 16px rgba(255,77,79,0.4); border: 3px solid var(--cbg); cursor: pointer; z-index: 99; transition: transform 0.2s; }
+    .fab:active { transform: scale(0.9); }
+
+    /* ====== 卡片样式 ====== */
+    .card { background: var(--cbg); border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px var(--shadow); border: 1px solid var(--border); overflow: hidden; position: relative; transition: transform 0.2s, opacity 0.2s; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--g); transition: background 0.3s; }
+    .card.uc::before { background: var(--r); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px 18px 25px; cursor: grab; user-select: none; }
+    .site-name { font-size: 18px; font-weight: 800; color: var(--t); }
+    .toggle-icon { font-size: 22px; }
+    .card-body { padding: 0 20px 20px 25px; display: block; }
+    .card.collapsed .card-body { display: none; }
+
+    /* ====== 卡片内部元素 ====== */
+    .link-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
+    .site-link { font-size: 13px; color: var(--g); text-decoration: none; background: var(--gl); padding: 6px 12px; border-radius: 8px; font-weight: bold; }
+    .btn-copy { background: var(--input-bg); border: 1px solid var(--border); color: var(--tl); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    
+    .info-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 10px; }
+    .info-label { color: var(--tl); font-size: 13px; font-weight: bold; }
+    .balance { color: var(--r); font-weight: 900; font-size: 18px; }
+
+    /* 滑动开关 */
+    .switch-container { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .switch-text { font-size: 13px; font-weight: bold; }
+    .switch-text.un { color: var(--r); }
+    .switch-text.si { color: var(--g); }
+    .toggle-switch { position: relative; width: 44px; height: 24px; background-color: #666; border-radius: 24px; transition: 0.3s; }
+    .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .toggle-switch.active { background-color: var(--g); }
+    .toggle-switch.active::after { transform: translateX(20px); }
+
+    /* 充值流水 */
+    .recharge-box { background: var(--yl); border: 1px solid var(--y); border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 13px; color: var(--y); }
+    .recharge-title { font-weight: bold; margin-bottom: 6px; border-bottom: 1px dashed var(--y); padding-bottom: 6px; display: flex; justify-content: space-between; }
+    .recharge-list { display: flex; flex-direction: column; gap: 4px; }
+    .recharge-item { display: flex; justify-content: space-between; font-size: 12px; }
+    .recharge-total { font-weight: bold; color: var(--r); font-size: 14px; }
+    
+    /* URL / 账号 / QQ / 模型 / 备注 */
+    .url-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .url-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+    .url-label { font-size: 11px; color: var(--tl); font-weight: bold; margin-bottom: 2px; }
+    .url-text { font-size: 12px; color: var(--t); word-break: break-all; font-family: monospace; }
+    
+    .auth-box { background: var(--bl); border: 1px dashed var(--b); border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .auth-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .auth-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+    .auth-label { font-size: 11px; color: var(--b); font-weight: bold; margin-bottom: 2px; }
+    .auth-text { font-size: 13px; color: var(--t); word-break: break-all; font-family: monospace; font-weight: bold; }
+    .btn-eye { background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 0 5px; }
+    
+    .qq-box { background: var(--bl); border: 1px dashed #91d5ff; border-radius: 12px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .qq-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+    .qq-label { font-size: 11px; color: var(--b); font-weight: bold; margin-bottom: 2px; display: flex; align-items: center; gap: 4px; }
+    .qq-text { font-size: 14px; color: var(--t); font-weight: bold; font-family: monospace; }
+    
+    .model-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .model-item { background: var(--gl); border: 1px solid var(--g); border-radius: 10px; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .model-name { font-size: 13px; color: var(--g); font-weight: bold; }
+    .model-price { font-size: 12px; color: #fff; font-weight: bold; background: var(--g); padding: 2px 8px; border-radius: 6px; }
+    
+    .remark-box { background: var(--input-bg); border: 1px dashed var(--border); border-radius: 12px; padding: 10px; margin-bottom: 12px; }
+    .remark-label { font-size: 11px; color: var(--tl); font-weight: bold; margin-bottom: 4px; }
+    .remark-text { font-size: 12px; color: var(--tl); line-height: 1.5; word-break: break-all; }
+
+    .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+    .btn-small { background: var(--cbg); border: 1px solid var(--border); color: var(--tl); padding: 6px 16px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; }
+    .btn-edit { border-color: var(--g); color: var(--g); }
+    .btn-delete { border-color: var(--r); color: var(--r); }
+
+    /* ====== 弹窗表单 ====== */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; justify-content: center; align-items: flex-end; }
+    .modal-content { background: var(--cbg); color: var(--t); width: 100%; max-height: 90vh; border-radius: 24px 24px 0 0; padding: 25px; overflow-y: auto; animation: slideUp 0.3s; border-top: 1px solid var(--border); }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 13px; color: var(--tl); margin-bottom: 6px; font-weight: bold; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; outline: none; background: var(--input-bg); color: var(--t); }
+    .form-group input:focus { border-color: var(--g); }
+    
+    .dynamic-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .input-model { flex: 2; }
+    .input-price { flex: 1; }
+    .btn-remove-model { background: var(--rl); color: var(--r); border: none; padding: 0 15px; border-radius: 10px; font-weight: bold; cursor: pointer; height: 42px; }
+    .btn-add-model { background: var(--gl); color: var(--g); border: 1px dashed var(--g); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 15px; }
+    
+    .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+    .btn-cancel { flex: 1; background: var(--input-bg); color: var(--t); border: 1px solid var(--border); padding: 14px; border-radius: 12px; font-size: 15px; font-weight: bold; }
+    .btn-save { flex: 2; background: var(--g); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: bold; }
+    
+    .empty-state { text-align: center; color: var(--tl); margin-top: 50px; font-size: 14px; }
+    .hidden { display: none !important; }
+    .dragging { opacity: 0.5; transform: scale(1.02); box-shadow: 0 10px 25px var(--shadow); border: 2px dashed var(--g); }
+
+    /* 账单专属样式 */
+    .bill-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
+    .bill-total { font-size: 18px; font-weight: 900; color: var(--r); text-align: center; margin: 15px 0; background: var(--rl); padding: 15px; border-radius: 12px; }
 </style>
 </head>
 <body>
+
+<!-- 顶部看板 -->
 <div class="top-bar">
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     <h1>qiuqiuのapi</h1>
     <div class="dashboard">
         <div class="clickable" onclick="openBillModal()">总余额<span class="gt" id="tb">0</span></div>
-        <div class="clickable" onclick="openBillModal()">本月充值<span style="color:var(--b);font-size:16px;" id="monthTotal">0</span></div>
+        <div class="clickable" onclick="openBillModal()">本月充值<span style="color:var(--b); font-size:16px;" id="monthTotal">0</span></div>
         <div>总站点<span id="ts">0</span></div>
     </div>
 </div>
+
+<!-- 工具栏 -->
 <div class="toolbar">
-<div class="search-box"><input type="text" id="si" placeholder="搜站点/用户名/模型..." oninput="rs()"></div>
-<button class="btn-f" id="fu" onclick="tf('unsign')">🍏 仅看未签</button>
-<button class="btn-f" id="fr" onclick="tf('recharge')">💰 仅看充值</button>
-<button class="btn-r" onclick="resSigns()">🔄 重置</button>
-<button class="btn-s" onclick="openSync()">☁️ 同步</button>
+    <div class="search-box">
+        <input type="text" id="si" placeholder="搜站点/用户名/模型..." oninput="rs()">
+    </div>
+    <button class="btn-f" id="fu" onclick="tf('unsign')">🍏 仅看未签</button>
+    <button class="btn-f" id="fr" onclick="tf('recharge')">💰 仅看充值</button>
+    <button class="btn-r" onclick="resSigns()">🔄 重置</button>
+    <button class="btn-s" onclick="openSync()">☁️ 同步</button>
 </div>
+
+<!-- 站点列表 -->
 <div id="sl"></div>
 <button class="fab" onclick="openForm()">+</button>
 
 <!-- 账单中心弹窗 -->
 <div class="modal" id="billModal">
-<div class="modal-content">
-<h2 style="margin-bottom:20px;text-align:center;color:var(--b)">📊 月度充值账单</h2>
-<div class="form-group">
-    <label>选择要查看的月份：</label>
-    <input type="month" id="billMonth" onchange="renderBill()">
-</div>
-<div id="billContent"></div>
-<div class="modal-actions"><button class="btn-cancel" onclick="closeBillModal()">关闭</button></div>
-</div>
+    <div class="modal-content">
+        <h2 style="margin-bottom:20px; text-align:center; color:var(--b)">📊 月度充值账单</h2>
+        <div class="form-group">
+            <label>选择要查看的月份：</label>
+            <input type="month" id="billMonth" onchange="renderBill()">
+        </div>
+        <div id="billContent"></div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeBillModal()">关闭</button>
+        </div>
+    </div>
 </div>
 
 <!-- 同步数据弹窗 -->
 <div class="modal" id="syncModal">
-<div class="modal-content">
-<h2 style="margin-bottom:20px;text-align:center;color:var(--b)">☁️ 数据备份与恢复</h2>
-<div class="form-group" style="border-bottom:2px dashed var(--border);padding-bottom:20px">
-<label style="color:var(--b);font-size:15px">📤 导出数据</label>
-<p style="font-size:12px;color:var(--tl);margin-bottom:10px">可以只导出今天新增的站点！</p>
-<button type="button" class="btn-add-model" style="background:var(--bl);border-color:var(--b);color:var(--b)" onclick="expFile('all')">💾 下载全部文件</button>
-<button type="button" class="btn-add-model" style="background:var(--gl);border-color:var(--g);color:var(--g)" onclick="expFile('today')">✨ 只下载今天新增的</button>
-<label style="margin-top:15px">或者：复制文本</label>
-<textarea id="expTxt" style="min-height:60px;font-family:monospace;font-size:12px;margin-bottom:5px" placeholder="生成的文本会显示在这里..."></textarea>
-<button type="button" class="btn-copy" style="width:100%;padding:10px;margin-bottom:5px;background:var(--bl);border-color:var(--b);color:var(--b)" onclick="expTxt('all')">📋 复制全部文本</button>
-<button type="button" class="btn-copy" style="width:100%;padding:10px;background:var(--gl);border-color:var(--g);color:var(--g)" onclick="expTxt('today')">📋 复制今天新增文本</button>
-</div>
-<div class="form-group" style="padding-top:10px">
-<label style="color:var(--g);font-size:15px">📥 导入数据（自动去重合并）</label>
-<input type="file" id="impFile" accept=".json" style="display:none" onchange="impFile(event)">
-<button type="button" class="btn-add-model" style="background:transparent;border-color:var(--g);color:var(--g)" onclick="document.getElementById('impFile').click()">📂 选择文件上传合并</button>
-<textarea id="impTxt" style="min-height:60px;font-family:monospace;font-size:12px;margin-bottom:5px" placeholder="在此粘贴刚才复制的文本..."></textarea>
-<button type="button" class="btn-add-model" style="background:var(--g);border-color:var(--g);color:#fff" onclick="impTxt()">✅ 确认导入合并</button>
-</div>
-<div class="modal-actions"><button class="btn-cancel" onclick="closeSync()">关闭</button></div>
-</div>
+    <div class="modal-content">
+        <h2 style="margin-bottom:20px; text-align:center; color:var(--b)">☁️ 数据备份与恢复</h2>
+        <div class="form-group" style="border-bottom:2px dashed var(--border); padding-bottom:20px">
+            <label style="color:var(--b); font-size:15px">📤 导出数据</label>
+            <p style="font-size:12px; color:var(--tl); margin-bottom:10px">可以只导出今天新增的站点！</p>
+            <button type="button" class="btn-add-model" style="background:var(--bl); border-color:var(--b); color:var(--b)" onclick="expFile('all')">💾 下载全部文件</button>
+            <button type="button" class="btn-add-model" style="background:var(--gl); border-color:var(--g); color:var(--g)" onclick="expFile('today')">✨ 只下载今天新增的</button>
+            
+            <label style="margin-top:15px">或者：复制文本</label>
+            <textarea id="expTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:5px" placeholder="生成的文本会显示在这里..."></textarea>
+            <button type="button" class="btn-copy" style="width:100%; padding:10px; margin-bottom:5px; background:var(--bl); border-color:var(--b); color:var(--b)" onclick="expTxt('all')">📋 复制全部文本</button>
+            <button type="button" class="btn-copy" style="width:100%; padding:10px; background:var(--gl); border-color:var(--g); color:var(--g)" onclick="expTxt('today')">📋 复制今天新增文本</button>
+        </div>
+        <div class="form-group" style="padding-top:10px">
+            <label style="color:var(--g); font-size:15px">📥 导入数据（自动去重合并）</label>
+            <p style="font-size:12px; color:var(--tl); margin-bottom:10px">导入时如果遇到同名的站点会自动跳过，不会重复。</p>
+            <input type="file" id="impFile" accept=".json" style="display:none" onchange="impFile(event)">
+            <button type="button" class="btn-add-model" style="background:transparent; border-color:var(--g); color:var(--g)" onclick="document.getElementById('impFile').click()">📂 选择文件上传合并</button>
+            
+            <label style="margin-top:15px">或者：粘贴文本导入</label>
+            <textarea id="impTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:5px" placeholder="在此粘贴刚才复制的文本..."></textarea>
+            <button type="button" class="btn-add-model" style="background:var(--g); border-color:var(--g); color:#fff" onclick="impTxt()">✅ 确认导入合并</button>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeSync()">关闭</button>
+        </div>
+    </div>
 </div>
 
 <!-- 添加/编辑 弹窗 -->
 <div class="modal" id="formModal">
-<div class="modal-content">
-<h2 id="mt" style="margin-bottom:20px;text-align:center;color:var(--g)">添加新站点</h2>
-<input type="hidden" id="eid">
-<div class="form-group"><label>站点名称 *</label><input type="text" id="sn" placeholder="例如：某某网"></div>
-<div class="form-group"><label>站点链接</label><input type="url" id="su" placeholder="https://..."></div>
-<div class="form-group"><label>是否支持签到？</label><select id="ss" onchange="tso()"><option value="是">支持</option><option value="否">不支持</option></select></div>
-<div id="sd" class="form-group"><label>今日是否已签到？</label><select id="is"><option value="否">未签到</option><option value="是">已签到 ✅</option></select></div>
-<div id="cg" class="form-group"><label>签到条件</label><input type="text" id="sc" placeholder="例如：需满10元"></div>
-<div class="form-group"><label>当前余额</label><input type="text" id="bal" placeholder="例如：25.5"></div>
-
-<div class="form-group" style="background:var(--yl);padding:15px;border-radius:12px;border:1px solid var(--y)">
-<label style="color:var(--y)">💰 充值记录流水</label>
-<div id="rc"></div>
-<button type="button" class="btn-add-model" style="background:transparent;border-color:var(--y);color:var(--y);margin-top:5px;" onclick="addR()">+ 记录一笔充值</button>
-</div>
-
-<div class="form-group" style="background:var(--input-bg);padding:15px;border-radius:12px;margin-bottom:10px"><label>专属 URL</label><input type="text" id="cu" placeholder="用于复制" style="background:var(--cbg)"></div>
-<div class="form-group" style="background:var(--bl);padding:15px;border-radius:12px;margin-bottom:10px;border:1px solid var(--b)">
-<label style="color:var(--b)">🔐 专属用户名和密码</label>
-<input type="text" id="au" placeholder="输入用户名" style="background:var(--cbg);margin-bottom:8px;border-color:transparent">
-<input type="text" id="ap" placeholder="输入密码" style="background:var(--cbg);border-color:transparent">
-</div>
-<div class="form-group" style="background:var(--bl);padding:15px;border-radius:12px;margin-bottom:15px;border:1px solid #91d5ff">
-<label style="color:var(--b)">🐧 专属 QQ 群号</label>
-<input type="number" id="qg" placeholder="群号" style="background:var(--cbg);border-color:transparent">
-</div>
-<div class="form-group">
-<label style="color:var(--g)">🍏 好吃模型列表</label>
-<div id="mc"></div>
-<button type="button" class="btn-add-model" onclick="addM()">+ 添加一个模型</button>
-</div>
-<div class="form-group"><label>额外备注</label><textarea id="rm" placeholder="记点什么..."></textarea></div>
-<div class="modal-actions"><button class="btn-cancel" onclick="closeForm()">取消</button><button class="btn-save" onclick="saveSite()">保存</button></div>
-</div>
+    <div class="modal-content">
+        <h2 id="mt" style="margin-bottom:20px; text-align:center; color:var(--g)">添加新站点</h2>
+        <input type="hidden" id="eid">
+        
+        <div class="form-group"><label>站点名称 *</label><input type="text" id="sn" placeholder="例如：某某网"></div>
+        <div class="form-group"><label>站点链接</label><input type="url" id="su" placeholder="https://..."></div>
+        
+        <div class="form-group">
+            <label>是否支持签到？</label>
+            <select id="ss" onchange="tso()"><option value="是">支持</option><option value="否">不支持</option></select>
+        </div>
+        <div id="sd" class="form-group">
+            <label>今日是否已签到？</label>
+            <select id="is"><option value="否">未签到</option><option value="是">已签到 ✅</option></select>
+        </div>
+        <div id="cg" class="form-group">
+            <label>签到条件</label>
+            <input type="text" id="sc" placeholder="例如：需满10元">
+        </div>
+        
+        <div class="form-group"><label>当前余额</label><input type="text" id="bal" placeholder="例如：25.5"></div>
+        
+        <div class="form-group" style="background:var(--yl); padding:15px; border-radius:12px; border:1px solid var(--y)">
+            <label style="color:var(--y)">💰 充值记录流水</label>
+            <div id="rc"></div>
+            <button type="button" class="btn-add-model" style="background:transparent; border-color:var(--y); color:var(--y); margin-top:5px;" onclick="addR()">+ 记录一笔充值</button>
+        </div>
+        
+        <div class="form-group" style="background:var(--input-bg); padding:15px; border-radius:12px; margin-bottom:10px">
+            <label>专属 URL</label>
+            <input type="text" id="cu" placeholder="用于复制" style="background:var(--cbg)">
+        </div>
+        
+        <div class="form-group" style="background:var(--bl); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--b)">
+            <label style="color:var(--b)">🔐 专属用户名和密码</label>
+            <input type="text" id="au" placeholder="输入用户名" style="background:var(--cbg); margin-bottom:8px; border-color:transparent">
+            <input type="text" id="ap" placeholder="输入密码" style="background:var(--cbg); border-color:transparent">
+        </div>
+        
+        <div class="form-group" style="background:var(--bl); padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #91d5ff">
+            <label style="color:var(--b)">🐧 专属 QQ 群号</label>
+            <input type="number" id="qg" placeholder="群号" style="background:var(--cbg); border-color:transparent">
+        </div>
+        
+        <div class="form-group">
+            <label style="color:var(--g)">🍏 好吃模型列表</label>
+            <div id="mc"></div>
+            <button type="button" class="btn-add-model" onclick="addM()">+ 添加一个模型</button>
+        </div>
+        
+        <div class="form-group"><label>额外备注</label><textarea id="rm" placeholder="记点什么..."></textarea></div>
+        
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeForm()">取消</button>
+            <button class="btn-save" onclick="saveSite()">保存</button>
+        </div>
+    </div>
 </div>
 
 <script>
-// ======= 1. 自动日夜模式逻辑 =======
-function checkAutoTheme() {
-    const hour = new Date().getHours();
-    // 晚上 21点 到 早上 6点，自动变黑
-    const shouldBeDark = (hour >= 21 || hour < 6);
-    
-    // 如果用户之前强制点击过按钮，可能会有冲突，但我们以自动为主
-    if (shouldBeDark) {
-        document.body.classList.add('dark-mode');
-        document.getElementById('themeBtn').innerText = '☀️';
-    } else {
-        document.body.classList.remove('dark-mode');
-        document.getElementById('themeBtn').innerText = '🌙';
+    // ==========================================
+    // 1. 日夜模式自动切换逻辑
+    // ==========================================
+    function checkAutoTheme() {
+        const hour = new Date().getHours();
+        const shouldBeDark = (hour >= 21 || hour < 6);
+        if (shouldBeDark) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeBtn').innerText = '☀️';
+        } else {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('themeBtn').innerText = '🌙';
+        }
     }
-}
-// 页面加载时检查一次
-checkAutoTheme();
-// 每分钟检查一次，确保到了 21点 自动变色
-setInterval(checkAutoTheme, 60000);
+    checkAutoTheme();
+    setInterval(checkAutoTheme, 60000); // 每分钟检查一次
 
-// 手动点击也可以切换
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    document.getElementById('themeBtn').innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-}
-// =============================
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        document.getElementById('themeBtn').innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    }
 
-let lastVisit = localStorage.getItem('lastVisitDate');
-let today = new Date().toLocaleDateString();
-let sites = JSON.parse(localStorage.getItem('mySitesV17')) || []; // 沿用 V17 数据
+    // ==========================================
+    // 2. 数据初始化与跨天重置
+    // ==========================================
+    let lastVisit = localStorage.getItem('lastVisitDate');
+    let today = new Date().toLocaleDateString();
+    let sites = JSON.parse(localStorage.getItem('mySitesV17')) || [];
 
-if (lastVisit !== today) {
-    if (sites.length > 0) { sites.forEach(s => { if(s.supportSign === '是') s.isSigned = '否'; }); localStorage.setItem('mySitesV17', JSON.stringify(sites)); }
-    localStorage.setItem('lastVisitDate', today);
-}
+    if (lastVisit !== today) {
+        if (sites.length > 0) {
+            sites.forEach(s => { if (s.supportSign === '是') s.isSigned = '否'; });
+            localStorage.setItem('mySitesV17', JSON.stringify(sites));
+        }
+        localStorage.setItem('lastVisitDate', today);
+    }
 
-let isEditing = false, currentFilter = 'none', searchKeyword = '', draggedIndex = null;
+    let isEditing = false;
+    let currentFilter = 'none';
+    let searchKeyword = '';
+    let draggedIndex = null;
 
-// ======= 2. 看板：本月总充值计算 =======
-function updateMonthlyTotal() {
-    let currentMonth = new Date().toISOString().slice(0, 7); 
-    let monthlyTotal = 0;
-    sites.forEach(site => {
+    // ==========================================
+    // 3. 统计与账单中心
+    // ==========================================
+    function updateMonthlyTotal() {
+        let currentMonth = new Date().toISOString().slice(0, 7);
+        let monthlyTotal = 0;
+        sites.forEach(site => {
+            if (site.recharges && site.recharges.length > 0) {
+                site.recharges.forEach(r => {
+                    if (r.date && r.date.startsWith(currentMonth)) {
+                        const amt = parseFloat(r.amount);
+                        if (!isNaN(amt)) monthlyTotal += amt;
+                    }
+                });
+            }
+        });
+        const el = document.getElementById('monthTotal');
+        if (el) el.innerText = monthlyTotal.toFixed(1);
+    }
+
+    function openBillModal() {
+        document.getElementById('billMonth').value = new Date().toISOString().slice(0, 7);
+        renderBill();
+        document.getElementById('billModal').style.display = 'flex';
+    }
+
+    function closeBillModal() {
+        document.getElementById('billModal').style.display = 'none';
+    }
+
+    function renderBill() {
+        const targetMonth = document.getElementById('billMonth').value;
+        if (!targetMonth) return;
+        
+        let grandTotal = 0;
+        let html = '';
+        
+        sites.forEach(site => {
+            let siteTotal = 0;
+            if (site.recharges && site.recharges.length > 0) {
+                site.recharges.forEach(r => {
+                    if (r.date && r.date.startsWith(targetMonth)) {
+                        const amt = parseFloat(r.amount);
+                        if (!isNaN(amt)) siteTotal += amt;
+                    }
+                });
+            }
+            if (siteTotal > 0) {
+                grandTotal += siteTotal;
+                html += `<div class="bill-row"><span>${site.name}</span><span style="color:var(--r); font-weight:bold;">+${siteTotal.toFixed(1)}</span></div>`;
+            }
+        });
+        
+        let content = `<div class="bill-total">${targetMonth.split('-')[0]}年${targetMonth.split('-')[1]}月总充值：${grandTotal.toFixed(1)}</div>`;
+        if (html === '') {
+            content += `<div style="text-align:center; color:var(--tl); padding:20px;">该月没有任何充值记录</div>`;
+        } else {
+            content += html;
+        }
+        document.getElementById('billContent').innerHTML = content;
+    }
+
+    // ==========================================
+    // 4. 同步数据（导入导出）
+    // ==========================================
+    function openSync() {
+        document.getElementById('expTxt').value = '';
+        document.getElementById('impTxt').value = '';
+        document.getElementById('impFile').value = '';
+        document.getElementById('syncModal').style.display = 'flex';
+    }
+    function closeSync() { document.getElementById('syncModal').style.display = 'none'; }
+
+    function expFile(mode) {
+        if (!sites.length) return alert('无数据');
+        let dataToExport = sites;
+        if (mode === 'today') {
+            const todayStr = new Date().toISOString().split('T')[0];
+            dataToExport = sites.filter(s => s.createDate === todayStr);
+            if (dataToExport.length === 0) return alert('今天还没有新增站点哦~');
+        }
+        const b = new Blob([JSON.stringify(dataToExport, null, 2)], {type: "application/json"}); 
+        const u = URL.createObjectURL(b); 
+        const a = document.createElement('a'); 
+        a.href = u; 
+        a.download = `qiuqiu_backup_${mode}_${new Date().toISOString().slice(0, 10)}.json`; 
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); 
+    }
+
+    function expTxt(mode) { 
+        if (!sites.length) return alert('无数据'); 
+        let dataToExport = sites;
+        if (mode === 'today') {
+            const todayStr = new Date().toISOString().split('T')[0];
+            dataToExport = sites.filter(s => s.createDate === todayStr);
+            if (dataToExport.length === 0) return alert('今天还没有新增站点哦~');
+        }
+        const s = JSON.stringify(dataToExport); 
+        document.getElementById('expTxt').value = s; 
+        navigator.clipboard.writeText(s).then(() => alert('✅ 已复制到剪贴板')).catch(() => alert('请手动长按上方文本框复制')); 
+    }
+
+    function processImportData(parsedData) {
+        if (!Array.isArray(parsedData)) { alert('❌ 导入失败：数据格式不正确'); return; }
+        if (parsedData.length === 0) { alert('⚠️ 导入的文件里没有数据'); return; }
+        
+        const existingNames = new Set(sites.map(s => s.name));
+        let addedCount = 0;
+        let skippedCount = 0;
+        
+        parsedData.forEach(newSite => {
+            if (existingNames.has(newSite.name)) {
+                skippedCount++;
+            } else {
+                sites.push(newSite);
+                existingNames.add(newSite.name);
+                addedCount++;
+            }
+        });
+        
+        alert(`🎉 导入完成！\n成功新增: ${addedCount} 个\n自动跳过(已存在): ${skippedCount} 个`);
+        sd(); rs(); closeSync();
+    }
+
+    function impFile(e) { 
+        const f = e.target.files[0]; if (!f) return; 
+        const r = new FileReader(); 
+        r.onload = function(e) {
+            try { processImportData(JSON.parse(e.target.result)); } 
+            catch (err) { alert('❌ 导入失败：文件解析错误'); } 
+        }; 
+        r.readAsText(f); 
+    }
+    function impTxt() { 
+        const s = document.getElementById('impTxt').value.trim(); 
+        if (!s) return alert('请先粘贴数据'); 
+        try { processImportData(JSON.parse(s)); } 
+        catch (e) { alert('❌ 导入失败：文本格式错误'); } 
+    }
+
+    // ==========================================
+    // 5. 核心渲染引擎
+    // ==========================================
+    function ud() { 
+        let tb = 0, tu = 0; 
+        sites.forEach(s => { 
+            const b = parseFloat(s.balance); 
+            if (!isNaN(b)) tb += b; 
+            if (s.supportSign === '是' && s.isSigned === '否') tu++; 
+        }); 
+        document.getElementById('tb').innerText = tb.toFixed(1); 
+        document.getElementById('ts').innerText = sites.length; 
+        document.getElementById('tu').innerText = tu; 
+        updateMonthlyTotal(); 
+    }
+
+    function tf(t) { 
+        currentFilter = (currentFilter === t) ? 'none' : t; 
+        document.getElementById('fu').className = currentFilter === 'unsign' ? 'btn-f ag' : 'btn-f'; 
+        document.getElementById('fr').className = currentFilter === 'recharge' ? 'btn-f ay' : 'btn-f'; 
+        rs(); 
+    }
+
+    function resSigns() { 
+        if (confirm('重置所有签到状态？')) { 
+            sites.forEach(s => { if (s.supportSign === '是') s.isSigned = '否'; }); 
+            sd(); rs(); 
+        } 
+    }
+
+    function tso() { 
+        const v = document.getElementById('ss').value === '是'; 
+        document.getElementById('sd').classList.toggle('hidden', !v); 
+        document.getElementById('cg').classList.toggle('hidden', !v); 
+    }
+
+    function addM(n = '', p = '') { 
+        const c = document.getElementById('mc'); 
+        const d = document.createElement('div'); 
+        d.className = 'dynamic-row'; 
+        d.innerHTML = `<input type="text" class="input-model mn" value="${n}" placeholder="名称"><input type="text" class="input-price mp" value="${p}" placeholder="价格"><button type="button" class="btn-remove-model" onclick="this.parentElement.remove()">×</button>`; 
+        c.appendChild(d); 
+    }
+
+    function addR(date = '', amount = '') {
+        const c = document.getElementById('rc'); 
+        const d = document.createElement('div'); 
+        d.className = 'dynamic-row';
+        const defaultDate = date || new Date().toISOString().split('T')[0];
+        d.innerHTML = `<input type="date" class="input-model r-date" value="${defaultDate}"><input type="text" class="input-price r-amount" value="${amount}" placeholder="金额"><button type="button" class="btn-remove-model" onclick="this.parentElement.remove()">×</button>`;
+        c.appendChild(d);
+    }
+
+    function tp(i) { 
+        const p = document.getElementById('p' + i), e = document.getElementById('e' + i); 
+        if (p.innerText === '••••••') { p.innerText = sites[i].accountPass; e.innerText = '🙈'; } 
+        else { p.innerText = '••••••'; e.innerText = '👁️'; } 
+    }
+
+    function rs() {
+        const l = document.getElementById('sl'); 
+        l.innerHTML = ''; 
+        searchKeyword = document.getElementById('si').value.toLowerCase();
+
+        sites.forEach((site, index) => {
+            if (currentFilter === 'unsign' && !(site.supportSign === '是' && site.isSigned === '否')) return;
+            if (currentFilter === 'recharge' && !(site.recharges && site.recharges.length > 0)) return;
+
+            let sc = site.name + (site.remark || '') + (site.customUrl || '') + (site.qqGroup || '') + (site.accountUser || '');
+        if (site.foodModels) site.foodModels.forEach(m => { sc += (m.name + m.price); });
+        if (searchKeyword && !sc.toLowerCase().includes(searchKeyword)) return;
+
+        let sh = '';
+        if (site.supportSign === '是') {
+            const si = site.isSigned === '是'; 
+            sh = `<div class="info-row"><span class="info-label">签到状态</span><div class="switch-container" onclick="event.stopPropagation();togS(${index})"><span class="switch-text ${si ? 'si' : 'un'}">${si ? '已签到' : '未签到'}</span><div class="toggle-switch ${si ? 'active' : ''}"></div></div></div>${site.condition ? `<div class="info-row"><span class="info-label">条件</span><span class="info-value" style="color:var(--y)">${site.condition}</span></div>` : ''}`;
+        }
+
+        let mh = ''; 
+        if (site.foodModels && site.foodModels.length > 0) {
+            const ms = site.foodModels.map(m => `<div class="model-item"><span class="model-name">${m.name}</span>${m.price ? `<span class="model-price">💰 ${m.price}</span>` : ''}</div>`).join(''); 
+            if (ms) mh = `<div class="model-grid">${ms}</div>`;
+        }
+
+        let uh = site.customUrl ? `<div class="url-box"><div class="url-info"><div class="url-label">专属 URL</div><div class="url-text">${site.customUrl}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.customUrl}',this)">📋 复制</button></div>` : '';
+        
+        let ah = (site.accountUser || site.accountPass) ? `<div class="auth-box">${site.accountUser ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔑 用户名</div><div class="auth-text">${site.accountUser}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountUser}',this)">📋 复制</button></div>` : ''}${site.accountPass ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔒 密码</div><div class="auth-text" id="p${index}">••••••</div></div><button class="btn-eye" id="e${index}" onclick="event.stopPropagation();tp(${index})">👁️</button><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountPass}',this)">📋 复制</button></div>` : ''}</div>` : '';
+        
+        let qh = site.qqGroup ? `<div class="qq-box"><div class="qq-info"><div class="qq-label">🐧 官方QQ群</div><div class="qq-text">${site.qqGroup}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.qqGroup}',this)">📋 复制群号</button></div>` : '';
+
+        let rh = '';
         if (site.recharges && site.recharges.length > 0) {
-            site.recharges.forEach(r => {
-                if (r.date && r.date.startsWith(currentMonth)) {
-                    const amt = parseFloat(r.amount);
-                    if (!isNaN(amt)) monthlyTotal += amt;
+            let total = 0;
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            let monthTotal = 0;
+            const listItems = site.recharges.map(r => {
+                const amt = parseFloat(r.amount);
+                if (!isNaN(amt)) {
+                    total += amt;
+                    if (r.date && r.date.startsWith(currentMonth)) monthTotal += amt;
                 }
-            });
+                return `<div class="recharge-item"><span>${r.date || '未知'}</span><span>+${r.amount || 0}</span></div>`;
+            }).join('');
+            let monthTitle = monthTotal > 0 ? `<span style="color:var(--y); font-size:12px; margin-left:10px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
+            rh = `<div class="recharge-box"><div class="recharge-title"><span>💰 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
         }
+
+        let rkh = site.remark ? `<div class="remark-box"><div class="remark-label">备注</div><div class="remark-text">${site.remark}</div></div>` : '';
+        
+        const c = document.createElement('div'); 
+        const ic = site.isCollapsed ? 'collapsed' : ''; 
+        const cc = (site.supportSign === '是' && site.isSigned === '否') ? 'uc' : ''; 
+        c.className = `card ${ic} ${cc}`;
+
+        c.setAttribute('draggable', 'true');
+        c.setAttribute('data-index', index);
+        c.addEventListener('dragstart', handleDragStart);
+        c.addEventListener('dragover', handleDragOver);
+        c.addEventListener('drop', handleDrop);
+        c.addEventListener('dragend', handleDragEnd);
+
+        c.innerHTML = `
+            <div class="card-header" onclick="togC(${index})">
+                <div class="site-name">${site.name}</div>
+                <div class="toggle-icon">${ic ? '🍎' : '🍏'}</div>
+            </div>
+            <div class="card-body">
+                <div class="link-row">
+                    ${site.url ? `<a href="${site.url.startsWith('http') ? site.url : 'https://' + site.url}" target="_blank" class="site-link">🔗 访问</a><button class="btn-copy" onclick="event.stopPropagation();cp('${site.url}',this)">📋 复制</button>` : ''}
+                </div>
+                ${sh}
+                <div class="info-row"><span class="info-label">当前余额</span><span class="balance">${site.balance || '0'}</span></div>
+                ${rh}${uh}${ah}${qh}${mh}${rkh}
+                <div class="actions">
+                    <button class="btn-small btn-edit" onclick="event.stopPropagation();edS(${index})">编辑</button>
+                    <button class="btn-small btn-delete" onclick="event.stopPropagation();delS(${index})">删除</button>
+                </div>
+            </div>`;
+        l.appendChild(c); 
     });
-    const el = document.getElementById('monthTotal');
-    if(el) el.innerText = monthlyTotal.toFixed(1);
+
+    if (l.innerHTML === '') l.innerHTML = '<div class="empty-state">没有符合条件的站点~</div>'; 
+    ud(); 
 }
 
-// ======= 3. 账单中心：按月查各站点 =======
-function openBillModal() {
-    // 默认显示当前月份
-    document.getElementById('billMonth').value = new Date().toISOString().slice(0, 7);
-    renderBill();
-    document.getElementById('billModal').style.display = 'flex';
+function handleDragStart(e) { 
+    draggedIndex = this.getAttribute('data-index'); 
+    this.classList.add('dragging'); 
+    e.dataTransfer.effectAllowed = 'move'; 
+    e.dataTransfer.setData('text/plain', draggedIndex); 
 }
-function closeBillModal() { document.getElementById('billModal').style.display = 'none'; }
-
-function renderBill() {
-    const targetMonth = document.getElementById('billMonth').value; // 例如 "2023-11"
-    if (!targetMonth) return;
-    
-    let grandTotal = 0;
-    let html = '';
-    
-    // 遍历所有站点，找这个月的充值
-    sites.forEach(site => {
-        let siteTotal = 0;
-        if (site.recharges && site.recharges.length > 0) {
-            site.recharges.forEach(r => {
-                if (r.date && r.date.startsWith(targetMonth)) {
-                    const amt = parseFloat(r.amount);
-                    if (!isNaN(amt)) siteTotal += amt;
-                }
-            });
+function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function handleDrop(e) {
+    e.preventDefault();
+    const targetCard = e.target.closest('.card');
+    if (targetCard && draggedIndex !== null) {
+        const targetIndex = targetCard.getAttribute('data-index');
+        if (draggedIndex !== targetIndex) {
+            const draggedItem = sites[draggedIndex];
+            sites.splice(draggedIndex, 1);
+            sites.splice(targetIndex, 0, draggedItem);
+            sd(); rs();
         }
-        if (siteTotal > 0) {
-            grandTotal += siteTotal;
-            html += `<div class="bill-row"><span>${site.name}</span><span style="color:var(--r);font-weight:bold;">+${siteTotal.toFixed(1)}</span></div>`;
-        }
-    });
-    
-    let content = `<div class="bill-total">${targetMonth.split('-')[0]}年${targetMonth.split('-')[1]}月总充值：${grandTotal.toFixed(1)}</div>`;
-    if (html === '') {
-        content += `<div style="text-align:center;color:var(--tl);padding:20px;">该月没有任何充值记录</div>`;
-    } else {
-        content += html;
     }
-    
-    document.getElementById('billContent').innerHTML = content;
 }
-// =======================================
+function handleDragEnd(e) { 
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('dragging')); 
+    draggedIndex = null; 
+}
 
-function openSync() { document.getElementById('expTxt').value=''; document.getElementById('impTxt').value=''; document.getElementById('impFile').value=''; document.getElementById('syncModal').style.display='flex'; }
-function closeSync() { document.getElementById('syncModal').style.display='none'; }
+function togS(i) { sites[i].isSigned = sites[i].isSigned === '是' ? '否' : '是'; sd(); rs(); }
+function togC(i) { sites[i].isCollapsed = !sites[i].isCollapsed; sd(); rs(); }
+function cp(t, b) { 
+    let s = t.startsWith('http') || !t.includes('.') ? t : 'https://' + t; 
+    navigator.clipboard.writeText(s).then(() => { 
+        const o = b.innerHTML; b.innerHTML = '✅ 已复制'; 
+        setTimeout(() => b.innerHTML = o, 1500); 
+    }).catch(() => alert('复制失败')); 
+}
+function sd() { localStorage.setItem('mySitesV17', JSON.stringify(sites)); }
 
-function expFile(mode) {
-    if(!sites.length) return alert('无数据');
-    let dataToExport = sites;
-    if (mode === 'today') {
-        const todayStr = new Date().toISOString().split('T')[0];
-        dataToExport = sites.filter(s => s.createDate === todayStr);
-        if (dataToExport.length === 0) return alert('今天还没有新增站点哦~');
+function openForm() {
+    isEditing = false; 
+    document.getElementById('mt').innerText = '添加新站点'; 
+    document.getElementById('eid').value = '';
+    document.getElementById('sn').value = ''; document.getElementById('su').value = ''; document.getElementById('ss').value = '是';
+    document.getElementById('is').value = '否'; document.getElementById('sc').value = ''; document.getElementById('bal').value = '';
+    document.getElementById('cu').value = ''; document.getElementById('au').value = ''; document.getElementById('ap').value = ''; document.getElementById('qg').value = ''; document.getElementById('rm').value = '';
+    document.getElementById('rc').innerHTML = '';
+    document.getElementById('mc').innerHTML = ''; 
+    addM(); tso(); 
+    document.getElementById('formModal').style.display = 'flex';
+}
+function closeForm() { document.getElementById('formModal').style.display = 'none'; }
+
+function saveSite() {
+    const n = document.getElementById('sn').value.trim(); 
+    if (!n) return alert('名称不能为空');
+    
+    const mns = document.querySelectorAll('.mn'), mps = document.querySelectorAll('.mp'), fms = [];
+    for (let i = 0; i < mns.length; i++) { 
+        const mn = mns[i].value.trim(), mp = mps[i].value.trim(); 
+        if (mn || mp) fms.push({name: mn || '未命名', price: mp}); 
     }
-    const b=new Blob([JSON.stringify(dataToExport,null,2)],{type:"application/json"}); 
-    const u=URL.createObjectURL(b); 
-    const a=document.createElement('a'); 
-    a.href=u; 
-    a.download=`qiuqiu_backup_${mode}_${new Date().toISOString().slice(0,10)}.json`; 
-    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); 
-}
 
-function expTxt(mode) { 
-    if(!sites.length) return alert('无数据'); 
-    let dataToExport = sites;
-    if (mode === 'today') {
-        const todayStr = new Date().toISOString().split('T')[0];
-        dataToExport = sites.filter(s => s.createDate === todayStr);
-        if (dataToExport.length === 0) return alert('今天还没有新增站点哦~');
+    const rds = document.querySelectorAll('.r-date'), ras = document.querySelectorAll('.r-amount'), rcs = [];
+    for (let i = 0; i < rds.length; i++) {
+        const d = rds[i].value.trim();
+        const a = ras[i].value.trim();
+        if (d || a) rcs.push({date: d, amount: a});
     }
-    const s=JSON.stringify(dataToExport); 
-    document.getElementById('expTxt').value=s; 
-    navigator.clipboard.writeText(s).then(()=>alert('✅ 已复制到剪贴板')).catch(()=>alert('请手动长按上方文本框复制')); 
-}
 
-function processImportData(parsedData) {
-    if (!Array.isArray(parsedData)) { alert('❌ 导入失败：数据格式不正确'); return; }
-    if (parsedData.length === 0) { alert('⚠️ 导入的文件里没有数据'); return; }
-    const existingNames = new Set(sites.map(s => s.name));
-    let addedCount = 0, skippedCount = 0;
-    parsedData.forEach(newSite => {
-        if (existingNames.has(newSite.name)) { skippedCount++; } 
-        else { sites.push(newSite); existingNames.add(newSite.name); addedCount++; }
-    });
-    alert(`🎉 导入完成！\n成功新增: ${addedCount} 个\n自动跳过(已存在): ${skippedCount} 个`);
-    sd(); rs(); closeSync();
-}
-
-function impFile(e) { 
-    const f=e.target.files[0]; if(!f)return; 
-    const r=new FileReader(); 
-    r.onload=function(e){ try{ processImportData(JSON.parse(e.target.result)); }catch(err){ alert('❌ 导入失败：文件解析错误'); } }; 
-    r.readAsText(f); 
-}
-function impTxt() { 
-    const s=document.getElementById('impTxt').value.trim(); if(!s)return alert('请先粘贴数据'); 
-    try{ processImportData(JSON.parse(s)); }catch(e){ alert('❌ 导入失败：文本格式错误'); } 
-}
-
-function ud() { let tb=0, tu=0; sites.forEach(s=>{ const b=parseFloat(s.balance); if(!isNaN(b)) tb+=b; if(s.supportSign==='是'&&s.isSigned==='否') tu++; }); document.getElementById('tb').innerText=tb.toFixed(1); document.getElementById('ts').innerText=sites.length; document.getElementById('tu').innerText=tu; updateMonthlyTotal(); }
-function tf(t) { currentFilter = (currentFilter===t)?'none':t; document.getElementById('fu').className = currentFilter==='unsign'?'btn-f ag':'btn-f'; document.getElementById('fr').className = currentFilter==='recharge'?'btn-f ay':'btn-f'; rs(); }
-function resSigns() { if(confirm('重置所有签到状态？')){ sites.forEach(s=>{ if(s.supportSign==='是') s.isSigned='否'; }); sd(); rs(); } }
-function tso() { const v=document.getElementById('ss').value==='是'; document.getElementById('sd').classList.toggle('hidden',!v); document.getElementById('cg').classList.toggle('hidden',!v); }
-function addM(n='',p='') { const c=document.getElementById('mc'); const d=document.createElement('div'); d.className='dynamic-row'; d.innerHTML=`<input type="text" class="input-model mn" value="${n}" placeholder="名称"><input type="text" class="input-price mp" value="${p}" placeholder="价格"><button type="button" class="btn-remove-model" onclick="this.parentElement.remove()">×</button>`; c.appendChild(d); }
-function addR(date = '', amount = '') {
-    const c = document.getElementById('rc'); const d = document.createElement('div'); d.className = 'dynamic-row';
-    const defaultDate = date || new Date().toISOString().split('T')[0];
-    d.innerHTML = `<input type="date" class="input-model r-date" value="${defaultDate}"><input type="text" class="input-price r-amount" value="${amount}" placeholder="金额"><button type="button" class="btn-remove-model" onclick="this.parentElement.remove()">×</button>`;
-    c.appendChild(d);
-}
-function tp(i) { const p=document.getElementById('p'+i), e=document.getElementById('e'+i); if(p.innerText==='••••••'){ p.innerText=sites[i].accountPass; e.innerText='🙈'; }else{ p.innerText='••••••'; e.innerText='👁️'; } }
-
-function rs() {
-const l=document.getElementById('sl'); l.innerHTML=''; searchKeyword=document.getElementById('si').value.toLowerCase();
-sites.forEach((site,index)=>{
-if(currentFilter==='unsign'&&!(site.supportSign==='是'&&site.isSigned==='否'))return;
-if(currentFilter==='recharge'&&!(site.recharges&&site.recharges.length>0))return;
-let sc=site.name+(site.remark||'')+(site.customUrl||'')+(site.qqGroup||'')+(site.accountUser||'');
-if(site.foodModels)site.foodModels.forEach(m=>{sc+=(m.name+m.price)});
-if(searchKeyword&&!sc.toLowerCase().includes(searchKeyword))return;
-let sh='';
-if(site.supportSign==='是'){const si=site.isSigned==='是'; sh=`<div class="info-row"><span class="info-label">签到状态</span><div class="switch-container" onclick="event.stopPropagation();togS(${index})"><span class="switch-text ${si?'si':'un'}">${si?'已签到':'未签到'}</span><div class="toggle-switch ${si?'active':''}"></div></div></div>${site.condition?`<div class="info-row"><span class="info-label">条件</span><span class="info-value" style="color:var(--y)">${site.condition}</span></div>`:''}`;}
-let mh=''; if(site.foodModels&&site.foodModels.length>0){const ms=site.foodModels.map(m=>`<div class="model-item"><span class="model-name">${m.name}</span>${m.price?`<span class="model-price">💰 ${m.price}</span>`:''}</div>`).join(''); if(ms)mh=`<div class="model-grid">${ms}</div>`;}
-let uh=site.customUrl?`<div class="url-box"><div class="url-info"><div class="url-label">专属 URL</div><div class="url-text">${site.customUrl}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.customUrl}',this)">📋 复制</button></div>`:'';
-let ah=(site.accountUser||site.accountPass)?`<div class="auth-box">${site.accountUser?`<div class="auth-row"><div class="auth-info"><div class="auth-label">🔑 用户名</div><div class="auth-text">${site.accountUser}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountUser}',this)">📋 复制</button></div>`:''}${site.accountPass?`<div class="auth-row"><div class="auth-info"><div class="auth-label">🔒 密码</div><div class="auth-text" id="p${index}">••••••</div></div><button class="btn-eye" id="e${index}" onclick="event.stopPropagation();tp(${index})">👁️</button><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountPass}',this)">📋 复制</button></div>`:''}</div>`:'';
-let qh=site.qqGroup?`<div class="qq-box"><div class="qq-info"><div class="qq-label">🐧 官方QQ群</div><div class="qq-text">${site.qqGroup}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.qqGroup}',this)">📋 复制群号</button></div>`:'';
-let rh = '';
-if (site.recharges && site.recharges.length > 0) {
-    let total = 0;
-    const currentMonth = new Date().toISOString().slice(0, 7);
-    let monthTotal = 0;
+    const d = {
+        name: n, url: document.getElementById('su').value.trim(), supportSign: document.getElementById('ss').value,
+        isSigned: document.getElementById('is').value, condition: document.getElementById('sc').value.trim(),
+        balance: document.getElementById('bal').value.trim(), recharges: rcs,
+        customUrl: document.getElementById('cu').value.trim(), accountUser: document.getElementById('au').value.trim(),
+        accountPass: document.getElementById('ap').value.trim(), qqGroup: document.getElementById('qg').value.trim(),
+        foodModels: fms, remark: document.getElementById('rm').value.trim(),
+        isCollapsed: isEditing ? sites[document.getElementById('eid').value].isCollapsed : false,
+        createDate: isEditing ? sites[document.getElementById('eid').value].createDate : new Date().toISOString().split('T')[0]
+    };
     
-    const listItems = site.recharges.map(r => {
-        const amt = parseFloat(r.amount);
-        if (!isNaN(amt)) {
-            total += amt;
-            if(r.date && r.date.startsWith(currentMonth)) monthTotal += amt;
-        }
-        return `<div class="recharge-item"><span>${r.date || '未知'}</span><span>+${r.amount || 0}</span></div>`;
-    }).join('');
+    if (isEditing) sites[document.getElementById('eid').value] = d;
+    else sites.push(d);
     
-    let monthTitle = monthTotal > 0 ? `<span style="color:var(--y);font-size:12px;margin-left:10px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
-    
-    rh = `<div class="recharge-box"><div class="recharge-title"><span>💰 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
+    sd(); closeForm(); rs();
 }
-let rkh=site.remark?`<div class="remark-box"><div class="remark-label">备注</div><div class="remark-text">${site.remark}</div></div>`:'';
-const c=document.createElement('div'); const ic=site.isCollapsed?'collapsed':''; const cc=(site.supportSign==='是'&&site.isSigned==='否')?'uc':''; c.className=`card ${ic} ${cc}`;
 
-c.setAttribute('draggable', 'true');
-c.setAttribute('data-index', index);
-c.addEventListener('dragstart', handleDragStart);
-c.addEventListener('dragover', handleDragOver);
-c.addEventListener('drop', handleDrop);
-c.addEventListener('dragend', handleDragEnd);
+function edS(i) {
+    isEditing = true; 
+    const s = sites[i];
+    document.getElementById('mt').innerText = '编辑站点'; 
+    document.getElementById('eid').value = i;
+    document.getElementById('sn').value = s.name; document.getElementById('su').value = s.url || ''; document.getElementById('ss').value = s.supportSign || '是';
+    document.getElementById('is').value = s.isSigned || '否'; document.getElementById('sc').value = s.condition || ''; document.getElementById('bal').value = s.balance || '';
+    document.getElementById('cu').value = s.customUrl || ''; document.getElementById('au').value = s.accountUser || ''; document.getElementById('ap').value = s.accountPass || ''; document.getElementById('qg').value = s.qqGroup || ''; document.getElementById('rm').value = s.remark || '';
 
-c.innerHTML=`<div class="card-header" onclick="togC(${index})"><div class="site-name">${site.name}</div><div class="toggle-icon">${ic?'🍎':'🍏'}</div></div><div class="card-body"><div class="link-row">${site.url?`<a href="${site.url.startsWith('http')?site.url:'https://'+site.url}" target="_blank" class="site-link">🔗 访问</a><button class="btn-copy" onclick="event.stopPropagation();cp('${site.url}',this)">📋 复制</button>`:''}</div>${sh}<div class="info-row"><span class="info-label">当前余额</span><span class="balance">${site.balance||'0'}</span></div>${rh}${uh}${ah}${qh}${mh}${rkh}<div class="actions"><button class="btn-small btn-edit" onclick="event.stopPropagation();edS(${index})">编辑</button><button class="btn-small btn-delete" onclick="event.stopPropagation();delS(${index})">删除</button></div></div>`;
-l.appendChild(c); });
-if(l.innerHTML==='')l.innerHTML='<div class="empty-state">没有符合条件的站点~</div>'; ud(); }
+    document.getElementById('rc').innerHTML = '';
+    if (s.recharges && s.recharges.length > 0) {
+        s.recharges.forEach(r => addR(r.date, r.amount));
+    } else if (s.hasRecharge === '是' && s.rechargeAmount) {
+        addR(s.rechargeDate || '', s.rechargeAmount);
+    }
 
-function handleDragStart(e) { draggedIndex = this.getAttribute('data-index'); this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', draggedIndex); }
-function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+    document.getElementById('mc').innerHTML = '';
+    if (s.foodModels && s.foodModels.length > 0) s.foodModels.forEach(m => addM(m.name, m.price));
+    else addM();
+    
+    tso(); 
+    document.getElementById('formModal').style.display = 'flex';
+}
+
+function delS(i) { 
+    if (confirm('确定删除？')) { 
+        sites.splice(i, 1); 
+        sd(); rs(); 
+    } 
+}
+
+rs();
+</script>
+</body>
+</html>
