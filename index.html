@@ -7,22 +7,37 @@
 <style>
     /* ====== 核心变量：白天模式 ====== */
     :root {
-        --g: #52c41a; --gl: #f6ffed; --r: #ff4d4f; --rl: #fff1f0; 
-        --y: #faad14; --yl: #fffbe6; --b: #12b7f5; --bl: #e6f7ff;
-        --t: #333333; --tl: #888888; --bg: #f7f9f7; --cbg: #ffffff; 
-        --border: #f0f0f0; --input-bg: #fafafa; --shadow: rgba(0, 0, 0, 0.04);
+        --g: #52c41a; --gl: #f6ffed; 
+        --r: #ff4d4f; --rl: #fff1f0; 
+        --y: #faad14; --yl: #fffbe6; 
+        --b: #12b7f5; --bl: #e6f7ff;
+        --t: #333333; --tl: #888888; 
+        --bg: #f7f9f7; --cbg: #ffffff; 
+        --border: #f0f0f0; --input-bg: #fafafa;
+        --shadow: rgba(0, 0, 0, 0.04);
     }
+
     /* ====== 核心变量：夜间模式 ====== */
     body.dark-mode {
-        --g: #49aa26; --gl: #1a2e16; --r: #e85a5a; --rl: #2e1616; 
-        --y: #e0a11c; --yl: #2e2516; --b: #269bd4; --bl: #16272e;
-        --t: #d1d5db; --tl: #9ca3af; --bg: #111827; --cbg: #1f2937; 
-        --border: #374151; --input-bg: #374151; --shadow: rgba(0, 0, 0, 0.3);
+        --g: #49aa26; --gl: #1a2e16; 
+        --r: #e85a5a; --rl: #2e1616; 
+        --y: #e0a11c; --yl: #2e2516; 
+        --b: #269bd4; --bl: #16272e;
+        --t: #d1d5db; --tl: #9ca3af; 
+        --bg: #111827; --cbg: #1f2937; 
+        --border: #374151; --input-bg: #374151;
+        --shadow: rgba(0, 0, 0, 0.3);
     }
 
     /* ====== 基础布局 ====== */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg); background-image: radial-gradient(circle at 0% 0%, rgba(82,196,26,.1) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,77,79,.1) 0, transparent 40%); background-attachment: fixed; color: var(--t); padding: 15px; padding-bottom: 100px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+    body { 
+        background-color: var(--bg); 
+        background-image: radial-gradient(circle at 0% 0%, rgba(82,196,26,.1) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,77,79,.1) 0, transparent 40%);
+        background-attachment: fixed;
+        color: var(--t); padding: 15px; padding-bottom: 100px; min-height: 100vh; 
+        transition: background-color 0.3s, color 0.3s; 
+    }
 
     /* ====== 顶部看板 ====== */
     .top-bar { background: var(--cbg); border-radius: 20px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px var(--shadow); border: 1px solid var(--border); position: relative; }
@@ -156,9 +171,10 @@
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     <h1>qiuqiuのapi</h1>
     <div class="dashboard">
+        <!-- 去掉了总余额，增加了待签到 -->
+        <div>待签到<span style="color:var(--r)" id="tu">0</span></div>
         <div class="clickable" onclick="openBillModal()">本月充值<span style="color:var(--b); font-size:16px;" id="monthTotal">0</span></div>
         <div>总站点<span id="ts">0</span></div>
-        <div>待签到<span style="color:var(--r)" id="tu">0</span></div>
     </div>
 </div>
 
@@ -328,15 +344,13 @@
     let draggedIndex = null;
 
     // ==========================================
-    // 3. 统计与账单中心 (修复了月份获取的时区Bug)
+    // 3. 统计与账单中心 (已修复默认本月显示)
     // ==========================================
-    function getCurrentMonthStr() {
-        const d = new Date();
-        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-    }
-
     function updateMonthlyTotal() {
-        let currentMonth = getCurrentMonthStr();
+        // 获取当前系统真实的年月，例如 "2023-11"
+        let now = new Date();
+        let currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+        
         let monthlyTotal = 0;
         sites.forEach(site => {
             if (site.recharges && site.recharges.length > 0) {
@@ -353,7 +367,10 @@
     }
 
     function openBillModal() {
-        document.getElementById('billMonth').value = getCurrentMonthStr();
+        let now = new Date();
+        let currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+        // 打开弹窗时，强制把输入框设置为当前月份
+        document.getElementById('billMonth').value = currentMonth;
         renderBill();
         document.getElementById('billModal').style.display = 'flex';
     }
@@ -385,7 +402,14 @@
             }
         });
         
-        let content = `<div class="bill-total">${targetMonth.split('-')[0]}年${targetMonth.split('-')[1]}月总充值：${grandTotal.toFixed(1)}</div>`;
+        // 解析显示月份（如 "2023-11" 显示为 "2023年11月"）
+        let mStr = targetMonth;
+        if(targetMonth.includes('-')){
+            let parts = targetMonth.split('-');
+            mStr = parts[0] + '年' + parts[1] + '月';
+        }
+
+        let content = `<div class="bill-total">${mStr}总充值：${grandTotal.toFixed(1)}</div>`;
         if (html === '') {
             content += `<div style="text-align:center; color:var(--tl); padding:20px;">该月没有任何充值记录</div>`;
         } else {
@@ -533,12 +557,12 @@
         l.innerHTML = ''; 
         searchKeyword = document.getElementById('si').value.toLowerCase();
 
-        sites.forEach((site, index) => {
+        sites.forEach((site,index) => {
             if (currentFilter === 'unsign' && !(site.supportSign === '是' && site.isSigned === '否')) return;
             if (currentFilter === 'recharge' && !(site.recharges && site.recharges.length > 0)) return;
 
             let sc = site.name + (site.remark || '') + (site.customUrl || '') + (site.qqGroup || '') + (site.accountUser || '');
-            if (site.foodModels) site.foodModels.forEach(m => { sc += (m.name + m.price);
+            if (site.foodModels) site.foodModels.forEach(m => { sc += (m.name + m.price); });
             if (searchKeyword && !sc.toLowerCase().includes(searchKeyword)) return;
 
             let sh = '';
@@ -562,7 +586,9 @@
             let rh = '';
             if (site.recharges && site.recharges.length > 0) {
                 let total = 0;
-                const currentMonth = getCurrentMonthStr();
+                let now = new Date();
+                let currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+                
                 let monthTotal = 0;
                 const listItems = site.recharges.map(r => {
                     const amt = parseFloat(r.amount);
@@ -572,6 +598,7 @@
                     }
                     return `<div class="recharge-item"><span>${r.date || '未知'}</span><span>+${r.amount || 0}</span></div>`;
                 }).join('');
+                
                 let monthTitle = monthTotal > 0 ? `<span style="color:var(--y); font-size:12px; margin-left:10px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
                 rh = `<div class="recharge-box"><div class="recharge-title"><span>💰 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
             }
