@@ -3,160 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>qiuqiuのapi ☕️✨</title>
+<title>qiuqiuのapi ♠️ Monochrome</title>
 <style>
-    /* ====== INS 风核心变量：白天模式 (Cream & Oat) ====== */
+    /* ====== 核心设计变量：高级灰白黑与现代暗黑 (Monochrome Glass) ====== */
     :root {
-        --g: #8a9a86; --gl: #f0f4ef;         /* 奶绿色 */
-        --r: #d48373; --rl: #fcf1f0;         /* 柔和陶土粉 */
-        --y: #d4a373; --yl: #fbf6f0;         /* 暖焦糖色 */
-        --b: #7c90a0; --bl: #f0f4f7;         /* 雾霾蓝 */
-        --t: #4a4543; --tl: #9e9590;         /* 浓缩咖啡灰 / 燕麦灰 */
-        --bg: #fbf9f6; --cbg: #ffffff;       /* 奶油白底色 */
-        --border: #f0ebe4; --input-bg: #f7f4ef;
-        --shadow: 0 10px 30px rgba(180, 165, 150, 0.08);
+        --g: #10b981; --gl: rgba(16, 185, 129, 0.08); /* 翡翠绿高亮点缀 */
+        --r: #f43f5e; --rl: rgba(244, 63, 94, 0.08);  /* 现代高级红 */
+        --y: #f59e0b; --yl: rgba(245, 158, 11, 0.08); /* 氛围金琥珀 */
+        --b: #3b82f6; --bl: rgba(59, 130, 246, 0.08);/* 质感冷调蓝 */
+        
+        --t: #0f172a; --tl: #64748b;                 /* 极致黑炭与消色灰 */
+        --bg: #f8fafc; --cbg: rgba(255, 255, 255, 0.7);/* 纯净浅灰白背景 + 毛玻璃 */
+        --border: rgba(15, 23, 42, 0.08); 
+        --input-bg: rgba(15, 23, 42, 0.03);
+        --shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07), 0 0 1px 1px rgba(15, 23, 42, 0.05);
+        --glass-blur: blur(24px);
     }
 
-    /* ====== INS 风核心变量：夜间模式 (Warm Espresso) ====== */
+    /* ====== 暗黑模式：深邃高级黑白灰与呼吸光晕 ====== */
     body.dark-mode {
-        --g: #9cb098; --gl: #242923; 
-        --r: #e09383; --rl: #2e201e; 
-        --y: #e3b282; --yl: #2e2821; 
-        --b: #94aabf; --bl: #1f252b;
-        --t: #ede7df; --tl: #a39c94; 
-        --bg: #1c1917; --cbg: #292524; 
-        --border: #3d3733; --input-bg: #35302c;
-        --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        --g: #34d399; --gl: rgba(52, 211, 153, 0.12);
+        --r: #fb7185; --rl: rgba(251, 113, 133, 0.12);
+        --y: #fbbf24; --yl: rgba(251, 191, 36, 0.12);
+        --b: #60a5fa; --bl: rgba(96, 165, 250, 0.12);
+        
+        --t: #f8fafc; --tl: #94a3b8;
+        --bg: #090a0f; --cbg: rgba(18, 22, 33, 0.65); /* 浓郁高级暗灰黑毛玻璃 */
+        --border: rgba(255, 255, 255, 0.08);
+        --input-bg: rgba(255, 255, 255, 0.04);
+        --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.06);
+        --glass-blur: blur(30px);
     }
 
     /* ====== 基础布局 ====== */
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
     body { 
         background-color: var(--bg); 
-        background-image: radial-gradient(circle at 10% 10%, rgba(212, 163, 115, 0.05) 0, transparent 40%), radial-gradient(circle at 90% 90%, rgba(138, 154, 134, 0.05) 0, transparent 40%);
+        /* 营造 INS 杂志风格的极光背景渐变 */
+        background-image: radial-gradient(circle at 0% 0%, var(--bl) 0, transparent 45%), radial-gradient(circle at 100% 100%, var(--rl) 0, transparent 45%);
         background-attachment: fixed;
         color: var(--t); padding: 20px; padding-bottom: 120px; min-height: 100vh; 
-        transition: background-color 0.4s, color 0.4s; 
+        transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s; 
     }
 
-    /* ====== 顶部看板 (INS 简约治愈风) ====== */
-    .top-bar { background: var(--cbg); border-radius: 28px; padding: 22px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); position: relative; }
-    h1 { font-size: 20px; font-weight: 700; text-align: center; color: var(--t); letter-spacing: 1px; margin-bottom: 15px; }
-    .theme-btn { position: absolute; right: 20px; top: 20px; background: var(--input-bg); border: none; font-size: 16px; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
-    .theme-btn:active { transform: scale(0.9); }
+    /* ====== 顶部看板 (高定毛玻璃卡片) ====== */
+    .top-bar { 
+        background: var(--cbg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); 
+        border-radius: 28px; padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); 
+        position: relative; overflow: hidden;
+    }
+    .top-bar::after {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    }
+    h1 { font-size: 20px; font-weight: 800; text-align: center; color: var(--t); letter-spacing: 1.5px; margin-bottom: 15px; text-transform: uppercase; }
+    .theme-btn { 
+        position: absolute; right: 20px; top: 20px; background: var(--input-bg); border: 1px solid var(--border); 
+        font-size: 16px; cursor: pointer; width: 38px; height: 38px; border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    }
+    .theme-btn:active { transform: scale(0.85); }
     
     .dashboard { display: flex; justify-content: space-around; text-align: center; font-size: 12px; color: var(--tl); letter-spacing: 0.5px; }
-    .dashboard span { display: block; font-size: 18px; font-weight: 600; color: var(--t); margin-top: 4px; }
+    .dashboard span { display: block; font-size: 18px; font-weight: 700; color: var(--t); margin-top: 4px; letter-spacing: -0.5px; }
     .dashboard .clickable { cursor: pointer; padding: 6px 12px; border-radius: 12px; transition: background 0.2s; }
     .dashboard .clickable:active { background: var(--input-bg); }
 
     /* ====== 工具栏 ====== */
     .toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .search-box { flex: 1; min-width: 140px; position: relative; }
-    .search-box input { width: 100%; padding: 12px 16px 12px 42px; border-radius: 16px; border: 1px solid var(--border); background: var(--cbg); color: var(--t); font-size: 14px; outline: none; transition: all 0.2s; }
-    .search-box input:focus { border-color: var(--g); box-shadow: 0 0 0 4px var(--gl); }
-    .search-box::before { content: '✨'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+    .search-box input { 
+        width: 100%; padding: 13px 16px 13px 44px; border-radius: 16px; border: 1px solid var(--border); 
+        background: var(--cbg); backdrop-filter: var(--glass-blur); color: var(--t); font-size: 14px; outline: none; 
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: var(--shadow); 
+    }
+    .search-box input:focus { border-color: var(--t); box-shadow: 0 0 0 4px var(--input-bg); }
+    .search-box::before { content: '✨'; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 14px; }
     
-    .btn-f, .btn-r, .btn-s { padding: 12px 16px; border-radius: 16px; font-size: 13px; font-weight: 600; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--cbg); color: var(--t); transition: all 0.2s; white-space: nowrap; }
-    .btn-f.ag { background: var(--g); color: #fff; border-color: var(--g); }
-    .btn-f.ay { background: var(--y); color: #fff; border-color: var(--y); }
+    .btn-f, .btn-r, .btn-s { 
+        padding: 13px 18px; border-radius: 16px; font-size: 13px; font-weight: 600; border: 1px solid var(--border); 
+        cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; 
+        background: var(--cbg); backdrop-filter: var(--glass-blur); color: var(--t); 
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); white-space: nowrap; box-shadow: var(--shadow); 
+    }
+    .btn-f.ag { background: var(--t); color: var(--bg); border-color: var(--t); }
+    .btn-f.ay { background: var(--y); color: #000; border-color: var(--y); }
     .btn-r { color: var(--r); background: var(--rl); border-color: transparent; }
     .btn-s { color: var(--b); background: var(--bl); border-color: transparent; }
-    .btn-f:active, .btn-r:active, .btn-s:active { transform: scale(0.96); opacity: 0.8; }
+    .btn-f:active, .btn-r:active, .btn-s:active { transform: scale(0.95); opacity: 0.8; }
 
-    /* ====== 悬浮添加按钮 (INS 优雅圆润风格) ====== */
-    .fab { position: fixed; bottom: 35px; right: 25px; width: 62px; height: 62px; border-radius: 50%; background: var(--t); color: var(--cbg); font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: none; cursor: pointer; z-index: 99; transition: transform 0.2s; }
-    .fab:active { transform: scale(0.92); }
+    /* ====== 浮动添加按钮 (高级悬浮胶囊/圆盘) ====== */
+    .fab { 
+        position: fixed; bottom: 35px; right: 25px; width: 62px; height: 62px; border-radius: 50%; 
+        background: var(--t); color: var(--bg); font-size: 30px; display: flex; align-items: center; justify-content: center; 
+        box-shadow: 0 15px 35px rgba(0,0,0,0.25); border: 1px solid var(--border); cursor: pointer; z-index: 99; 
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    }
+    .fab:active { transform: scale(0.85); }
 
-    /* ====== 卡片样式 (INS 极简画廊风格) ====== */
-    .card { background: var(--cbg); border-radius: 24px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; position: relative; transition: transform 0.2s, opacity 0.2s; }
-    .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--g); transition: background 0.3s; }
+    /* ====== 站点卡片设计 (时尚杂志解构排版 + 微边框) ====== */
+    .card { 
+        background: var(--cbg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); 
+        border-radius: 28px; margin-bottom: 18px; box-shadow: var(--shadow); border: 1px solid var(--border); 
+        overflow: hidden; position: relative; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s; 
+    }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--g); transition: background 0.3s; }
     .card.uc::before { background: var(--r); }
-    .card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px 20px 24px; cursor: grab; user-select: none; }
-    .site-name { font-size: 17px; font-weight: 700; color: var(--t); letter-spacing: -0.2px; }
-    .toggle-icon { font-size: 16px; background: var(--input-bg); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .card-body { padding: 0 22px 22px 24px; display: block; }
+    
+    .card-header { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px 22px 28px; cursor: grab; user-select: none; }
+    .site-name { font-size: 18px; font-weight: 700; color: var(--t); letter-spacing: -0.3px; }
+    .toggle-icon { font-size: 14px; background: var(--input-bg); border: 1px solid var(--border); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .card-body { padding: 0 24px 24px 28px; display: block; }
     .card.collapsed .card-body { display: none; }
 
     /* ====== 卡片内部元素 ====== */
-    .link-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; border-bottom: 1px dashed var(--border); padding-bottom: 14px; }
-    .site-link { font-size: 13px; color: var(--g); text-decoration: none; background: var(--gl); padding: 6px 14px; border-radius: 10px; font-weight: 600; }
-    .btn-copy { background: var(--input-bg); border: none; color: var(--tl); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: color 0.2s; }
+    .link-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 1px dashed var(--border); padding-bottom: 14px; }
+    .site-link { font-size: 13px; color: var(--bg); background: var(--t); text-decoration: none; padding: 7px 14px; border-radius: 10px; font-weight: 600; }
+    .btn-copy { background: var(--input-bg); border: 1px solid var(--border); color: var(--tl); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
     .btn-copy:active { opacity: 0.7; }
     
     .info-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; }
     .info-label { color: var(--tl); font-size: 13px; font-weight: 500; }
-    .balance { color: var(--r); font-weight: 700; font-size: 18px; }
+    .balance { color: var(--r); font-weight: 800; font-size: 19px; letter-spacing: -0.5px; }
 
-    /* 优雅奶油风滑动开关 */
+    /* 现代极简风格滑动开关 */
     .switch-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .switch-text { font-size: 13px; font-weight: 600; }
     .switch-text.un { color: var(--r); }
     .switch-text.si { color: var(--g); }
-    .toggle-switch { position: relative; width: 44px; height: 26px; background-color: var(--input-bg); border-radius: 26px; border: 1px solid var(--border); transition: 0.3s; }
+    .toggle-switch { position: relative; width: 46px; height: 26px; background-color: var(--input-bg); border-radius: 26px; border: 1px solid var(--border); transition: 0.3s; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: var(--tl); border-radius: 50%; transition: 0.3s; }
     .toggle-switch.active { background-color: var(--g); border-color: var(--g); }
-    .toggle-switch.active::after { transform: translateX(18px); background-color: #fff; }
+    .toggle-switch.active::after { transform: translateX(20px); background-color: #fff; }
 
-    /* 充值流水 */
-    .recharge-box { background: var(--yl); border-radius: 16px; padding: 14px; margin-bottom: 14px; font-size: 13px; color: var(--y); border: 1px solid rgba(212, 163, 115, 0.2); }
-    .recharge-title { font-weight: 600; margin-bottom: 8px; border-bottom: 1px dashed rgba(212, 163, 115, 0.3); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    /* 充值流水模块 */
+    .recharge-box { background: var(--yl); border-radius: 16px; padding: 14px 16px; margin-bottom: 14px; font-size: 13px; color: var(--y); border: 1px solid rgba(245, 158, 11, 0.15); }
+    .recharge-title { font-weight: 600; margin-bottom: 8px; border-bottom: 1px dashed rgba(245, 158, 11, 0.3); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
     .recharge-list { display: flex; flex-direction: column; gap: 6px; }
-    .recharge-item { display: flex; justify-content: space-between; font-size: 12px; opacity: 0.9; }
+    .recharge-item { display: flex; justify-content: space-between; font-size: 12px; opacity: 0.9; font-family: monospace; }
     .recharge-total { font-weight: 700; color: var(--r); font-size: 13px; }
     
     /* URL / 账号 / QQ / 模型 / 备注 */
-    .url-box { background: var(--input-bg); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .url-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .url-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-    .url-label { font-size: 11px; color: var(--tl); font-weight: 600; margin-bottom: 2px; letter-spacing: 0.5px; }
+    .url-label { font-size: 11px; color: var(--tl); font-weight: 600; margin-bottom: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
     .url-text { font-size: 12px; color: var(--t); word-break: break-all; font-family: monospace; }
     
-    .auth-box { background: var(--bl); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(124, 144, 160, 0.15); }
+    .auth-box { background: var(--bl); border: 1px solid rgba(59, 130, 246, 0.15); border-radius: 16px; padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .auth-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .auth-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-    .auth-label { font-size: 11px; color: var(--b); font-weight: 600; margin-bottom: 2px; letter-spacing: 0.5px; }
+    .auth-label { font-size: 11px; color: var(--b); font-weight: 600; margin-bottom: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
     .auth-text { font-size: 13px; color: var(--t); word-break: break-all; font-family: monospace; font-weight: 600; }
     .btn-eye { background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px; }
     
-    .qq-box { background: var(--bl); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid rgba(124, 144, 160, 0.15); }
+    .qq-box { background: var(--bl); border: 1px solid rgba(59, 130, 246, 0.15); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .qq-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-    .qq-label { font-size: 11px; color: var(--b); font-weight: 600; margin-bottom: 2px; letter-spacing: 0.5px; }
+    .qq-label { font-size: 11px; color: var(--b); font-weight: 600; margin-bottom: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
     .qq-text { font-size: 13px; color: var(--t); font-weight: 600; font-family: monospace; }
     
     .model-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-    .model-item { background: var(--gl); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+    .model-item { background: var(--gl); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
     .model-name { font-size: 13px; color: var(--g); font-weight: 600; }
-    .model-price { font-size: 11px; color: #fff; font-weight: 600; background: var(--g); padding: 2px 8px; border-radius: 8px; }
+    .model-price { font-size: 11px; color: var(--bg); font-weight: 600; background: var(--g); padding: 2px 8px; border-radius: 8px; }
     
-    .remark-box { background: var(--input-bg); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
-    .remark-label { font-size: 11px; color: var(--tl); font-weight: 600; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .remark-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
+    .remark-label { font-size: 11px; color: var(--tl); font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .remark-text { font-size: 12px; color: var(--tl); line-height: 1.5; word-break: break-all; }
 
-    .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-    .btn-small { background: var(--input-bg); border: none; color: var(--tl); padding: 7px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-    .btn-edit { color: var(--g); background: var(--gl); }
-    .btn-delete { color: var(--r); background: var(--rl); }
+    .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+    .btn-small { background: var(--input-bg); border: 1px solid var(--border); color: var(--tl); padding: 7px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+    .btn-edit { color: var(--g); background: var(--gl); border-color: transparent; }
+    .btn-delete { color: var(--r); background: var(--rl); border-color: transparent; }
     .btn-small:active { opacity: 0.7; }
 
-    /* ====== INS 风格底部抽屉弹窗 ====== */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(74, 69, 67, 0.4); backdrop-filter: blur(6px); z-index: 100; justify-content: center; align-items: flex-end; }
-    .modal-content { background: var(--cbg); color: var(--t); width: 100%; max-height: 88vh; border-radius: 32px 32px 0 0; padding: 24px; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.1, 1, 0.1, 1); border-top: 1px solid var(--border); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+    /* ====== 现代沉浸式毛玻璃模态窗 ====== */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; justify-content: center; align-items: flex-end; }
+    .modal-content { 
+        background: var(--cbg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); 
+        color: var(--t); width: 100%; max-height: 90vh; border-radius: 32px 32px 0 0; padding: 28px; 
+        overflow-y: auto; animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); border-top: 1px solid var(--border); 
+        box-shadow: 0 -20px 50px rgba(0,0,0,0.3); 
+    }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 12px; color: var(--tl); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 14px; font-size: 14px; outline: none; background: var(--input-bg); color: var(--t); transition: border-color 0.2s; }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--g); }
+    .form-group label { display: block; font-size: 11px; color: var(--tl); margin-bottom: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group input, .form-group textarea, .form-group select { 
+        width: 100%; padding: 13px 16px; border: 1px solid var(--border); border-radius: 14px; 
+        font-size: 14px; outline: none; background: var(--input-bg); color: var(--t); 
+        transition: border-color 0.2s, box-shadow 0.2s; 
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--t); box-shadow: 0 0 0 4px var(--input-bg); }
     
     .dynamic-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
     .input-model { flex: 2; }
     .input-price { flex: 1; }
     .btn-remove-model { background: var(--rl); color: var(--r); border: none; padding: 0 14px; border-radius: 12px; font-weight: 600; cursor: pointer; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-    .btn-add-model { background: var(--gl); color: var(--g); border: none; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; }
+    .btn-add-model { background: var(--input-bg); border: 1px dashed var(--border); color: var(--t); padding: 13px; border-radius: 14px; font-size: 13px; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; transition: background 0.2s; }
+    .btn-add-model:active { opacity: 0.7; }
     
     .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
-    .btn-cancel { flex: 1; background: var(--input-bg); color: var(--t); border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
-    .btn-save { flex: 2; background: var(--g); color: #fff; border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn-cancel { flex: 1; background: var(--input-bg); color: var(--t); border: 1px solid var(--border); padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn-save { flex: 2; background: var(--t); color: var(--bg); border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
     .btn-cancel:active, .btn-save:active { opacity: 0.8; }
     
     .empty-state { text-align: center; color: var(--tl); margin-top: 60px; font-size: 14px; font-weight: 500; }
@@ -164,8 +212,8 @@
     .dragging { opacity: 0.4; transform: scale(0.98); }
 
     /* 账单专属样式 */
-    .bill-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--border); font-size: 14px; align-items: center; }
-    .bill-total { font-size: 18px; font-weight: 700; color: var(--r); text-align: center; margin: 15px 0 20px 0; background: var(--rl); padding: 16px; border-radius: 16px; }
+    .bill-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--border); font-size: 14px; align-items: center; font-family: monospace; }
+    .bill-total { font-size: 18px; font-weight: 800; color: var(--r); text-align: center; margin: 15px 0 20px 0; background: var(--rl); padding: 16px; border-radius: 16px; letter-spacing: -0.5px; }
 </style>
 </head>
 <body>
@@ -187,7 +235,7 @@
         <input type="text" id="si" placeholder="搜索站点、用户名、模型..." oninput="rs()">
     </div>
     <button class="btn-f" id="fu" onclick="tf('unsign')">✨ 仅看未签</button>
-    <button class="btn-f" id="fr" onclick="tf('recharge')">☕️ 仅看充值</button>
+    <button class="btn-f" id="fr" onclick="tf('recharge')">💳 仅看充值</button>
     <button class="btn-r" onclick="resSigns()">🔄 重置</button>
     <button class="btn-s" onclick="openSync()">☁️ 同步</button>
 </div>
@@ -199,7 +247,7 @@
 <!-- 账单中心弹窗 -->
 <div class="modal" id="billModal">
     <div class="modal-content">
-        <h2 style="margin-bottom:20px; text-align:center; color:var(--b); font-size:18px;">☕️ 月度充值账单</h2>
+        <h2 style="margin-bottom:20px; text-align:center; color:var(--b); font-size:18px;">📊 月度充值账单</h2>
         <div class="form-group">
             <label>选择要查看的月份：</label>
             <input type="month" id="billMonth" onchange="renderBill()">
@@ -218,8 +266,8 @@
         <div class="form-group" style="border-bottom:1px dashed var(--border); padding-bottom:20px">
             <label style="color:var(--b)">📤 导出数据</label>
             <p style="font-size:12px; color:var(--tl); margin-bottom:12px">安全地备份或导出今天新增的站点！</p>
-            <button type="button" class="btn-add-model" style="background:var(--bl); color:var(--b)" onclick="expFile('all')">💾 下载全部文件备份</button>
-            <button type="button" class="btn-add-model" style="background:var(--gl); color:var(--g)" onclick="expFile('today')">✨ 只下载今天新增的站点</button>
+            <button type="button" class="btn-add-model" style="background:var(--bl); color:var(--b); border-color:transparent" onclick="expFile('all')">💾 下载全部文件备份</button>
+            <button type="button" class="btn-add-model" style="background:var(--gl); color:var(--g); border-color:transparent" onclick="expFile('today')">✨ 只下载今天新增的站点</button>
             
             <label style="margin-top:15px">或者：文本快速复制</label>
             <textarea id="expTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:8px" placeholder="生成的文本会显示在这里..."></textarea>
@@ -230,11 +278,11 @@
             <label style="color:var(--g)">📥 导入数据（自动去重合并）</label>
             <p style="font-size:12px; color:var(--tl); margin-bottom:12px">遇到同名字段自动跳过，安全不覆盖。</p>
             <input type="file" id="impFile" accept=".json" style="display:none" onchange="impFile(event)">
-            <button type="button" class="btn-add-model" style="background:var(--input-bg); color:var(--g); border:1px dashed var(--g)" onclick="document.getElementById('impFile').click()">📂 选择 JSON 文件合并</button>
+            <button type="button" class="btn-add-model" style="background:var(--input-bg); color:var(--g);" onclick="document.getElementById('impFile').click()">📂 选择 JSON 文件合并</button>
             
             <label style="margin-top:15px">或者：粘贴文本导入</label>
             <textarea id="impTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:8px" placeholder="在此粘贴刚才复制的文本..."></textarea>
-            <button type="button" class="btn-add-model" style="background:var(--g); color:#fff" onclick="impTxt()">✅ 确认导入合并</button>
+            <button type="button" class="btn-add-model" style="background:var(--t); color:var(--bg)" onclick="impTxt()">✅ 确认导入合并</button>
         </div>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeSync()">关闭</button>
@@ -257,7 +305,7 @@
         </div>
         <div id="sd" class="form-group">
             <label>今日是否已签到？</label>
-            <select id="is"><option value="否">未签到</option><option value="是">已签到 ✨</option></select>
+            <select id="is"><option value="否">未签到</option><option value="是">已签到 ✅</option></select>
         </div>
         <div id="cg" class="form-group">
             <label>签到条件</label>
@@ -266,24 +314,24 @@
         
         <div class="form-group"><label>当前余额</label><input type="text" id="bal" placeholder="例如：25.5"></div>
         
-        <div class="form-group" style="background:var(--yl); padding:16px; border-radius:16px; border:1px solid rgba(212,163,115,0.2)">
-            <label style="color:var(--y)">☕️ 充值记录流水</label>
+        <div class="form-group" style="background:var(--yl); padding:16px; border-radius:16px; border:1px solid rgba(245,158,11,0.2)">
+            <label style="color:var(--y)">💳 充值记录流水</label>
             <div id="rc"></div>
-            <button type="button" class="btn-add-model" style="background:rgba(255,255,255,0.6); color:var(--y); margin-top:8px;" onclick="addR()">+ 记录一笔充值</button>
+            <button type="button" class="btn-add-model" style="background:rgba(255,255,255,0.6); color:var(--y); margin-top:8px; border:1px dashed rgba(245,158,11,0.4)" onclick="addR()">+ 记录一笔充值</button>
         </div>
         
-        <div class="form-group" style="background:var(--input-bg); padding:16px; border-radius:16px;">
+        <div class="form-group" style="background:var(--input-bg); padding:16px; border-radius:16px; border:1px solid var(--border)">
             <label>专属 URL</label>
             <input type="text" id="cu" placeholder="用于复制的专属链接" style="background:var(--cbg)">
         </div>
         
-        <div class="form-group" style="background:var(--bl); padding:16px; border-radius:16px; border:1px solid rgba(124,144,160,0.15)">
+        <div class="form-group" style="background:var(--bl); padding:16px; border-radius:16px; border:1px solid rgba(59,130,246,0.15)">
             <label style="color:var(--b)">🔐 专属用户名和密码</label>
             <input type="text" id="au" placeholder="输入用户名" style="background:var(--cbg); margin-bottom:8px;">
             <input type="text" id="ap" placeholder="输入密码" style="background:var(--cbg);">
         </div>
         
-        <div class="form-group" style="background:var(--bl); padding:16px; border-radius:16px; border:1px solid rgba(124,144,160,0.15)">
+        <div class="form-group" style="background:var(--bl); padding:16px; border-radius:16px; border:1px solid rgba(59,130,246,0.15)">
             <label style="color:var(--b)">🐧 官方 QQ 群号</label>
             <input type="number" id="qg" placeholder="群号" style="background:var(--cbg);">
         </div>
@@ -399,7 +447,7 @@
             }
             if (siteTotal > 0) {
                 grandTotal += siteTotal;
-                html += `<div class="bill-row"><span>${site.name}</span><span style="color:var(--r); font-weight:600;">+${siteTotal.toFixed(1)}</span></div>`;
+                html += `<div class="bill-row"><span>${site.name}</span><span style="color:var(--r); font-weight:700;">+${siteTotal.toFixed(1)}</span></div>`;
             }
         });
         
@@ -600,7 +648,7 @@
                 }).join('');
                 
                 let monthTitle = monthTotal > 0 ? `<span style="color:var(--y); font-size:11px; margin-left:8px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
-                rh = `<div class="recharge-box"><div class="recharge-title"><span>☕️ 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
+                rh = `<div class="recharge-box"><div class="recharge-title"><span>💳 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
             }
 
             let rkh = site.remark ? `<div class="remark-box"><div class="remark-label">备注</div><div class="remark-text">${site.remark}</div></div>` : '';
@@ -620,7 +668,7 @@
             c.innerHTML = `
                 <div class="card-header" onclick="togC(${index})">
                     <div class="site-name">${site.name}</div>
-                    <div class="toggle-icon">${ic ? '☕️' : '✨'}</div>
+                    <div class="toggle-icon">${ic ? '♠️' : '✨'}</div>
                 </div>
                 <div class="card-body">
                     <div class="link-row">
