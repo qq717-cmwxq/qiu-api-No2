@@ -5,183 +5,175 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>qiuqiuのapi 🍎🍏</title>
 <style>
-    /* ====== 核心变量：白天模式 ====== */
     :root {
-        --g: #52c41a; --gl: #f6ffed; 
-        --r: #ff4d4f; --rl: #fff1f0; 
-        --y: #faad14; --yl: #fffbe6; 
-        --b: #12b7f5; --bl: #e6f7ff;
-        --t: #333333; --tl: #888888; 
-        --bg: #f7f9f7; --cbg: #ffffff; 
-        --border: #f0f0f0; --input-bg: #fafafa;
-        --shadow: rgba(0, 0, 0, 0.04);
+        --g: #34c759; --gl: rgba(52, 199, 89, 0.12); 
+        --r: #ff3b30; --rl: rgba(255, 59, 48, 0.12); 
+        --y: #ff9500; --yl: rgba(255, 149, 0, 0.12); 
+        --b: #007aff; --bl: rgba(0, 122, 255, 0.12);
+        --t: #1d1d1f; --tl: #86868b; 
+        --bg: #f5f5f7; --cbg: rgba(255, 255, 255, 0.82); 
+        --border: rgba(0, 0, 0, 0.06); --input-bg: rgba(118, 118, 128, 0.08);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        --glass-blur: blur(20px);
     }
 
-    /* ====== 核心变量：夜间模式 ====== */
     body.dark-mode {
-        --g: #49aa26; --gl: #1a2e16; 
-        --r: #e85a5a; --rl: #2e1616; 
-        --y: #e0a11c; --yl: #2e2516; 
-        --b: #269bd4; --bl: #16272e;
-        --t: #d1d5db; --tl: #9ca3af; 
-        --bg: #111827; --cbg: #1f2937; 
-        --border: #374151; --input-bg: #374151;
-        --shadow: rgba(0, 0, 0, 0.3);
+        --g: #30d158; --gl: rgba(48, 209, 88, 0.15); 
+        --r: #ff453a; --rl: rgba(255, 69, 58, 0.15); 
+        --y: #ffd60a; --yl: rgba(255, 214, 10, 0.15); 
+        --b: #0a84ff; --bl: rgba(10, 132, 255, 0.15);
+        --t: #f5f5f7; --tl: #98989d; 
+        --bg: #000000; --cbg: rgba(28, 28, 30, 0.75); 
+        --border: rgba(255, 255, 255, 0.1); --input-bg: rgba(120, 120, 128, 0.24);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        --glass-blur: blur(25px);
     }
 
-    /* ====== 基础布局 ====== */
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { 
         background-color: var(--bg); 
-        background-image: radial-gradient(circle at 0% 0%, rgba(82,196,26,.1) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,77,79,.1) 0, transparent 40%);
+        background-image: radial-gradient(circle at 10% 10%, var(--gl) 0, transparent 50%), radial-gradient(circle at 90% 90%, var(--bl) 0, transparent 50%);
         background-attachment: fixed;
-        color: var(--t); padding: 15px; padding-bottom: 100px; min-height: 100vh; 
-        transition: background-color 0.3s, color 0.3s; 
+        color: var(--t); padding: 20px; padding-bottom: 120px; min-height: 100vh; 
+        transition: background-color 0.4s, color 0.4s; 
     }
 
-    /* ====== 顶部看板 ====== */
-    .top-bar { background: var(--cbg); border-radius: 20px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px var(--shadow); border: 1px solid var(--border); position: relative; }
-    h1 { font-size: 22px; font-weight: 900; text-align: center; color: var(--r); margin-bottom: 10px; }
-    .theme-btn { position: absolute; right: 15px; top: 15px; background: transparent; border: none; font-size: 20px; cursor: pointer; padding: 5px; }
+    .top-bar { background: var(--cbg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); position: relative; }
+    h1 { font-size: 24px; font-weight: 700; text-align: center; color: var(--t); letter-spacing: -0.5px; margin-bottom: 15px; }
+    .theme-btn { position: absolute; right: 18px; top: 18px; background: var(--input-bg); border: none; font-size: 16px; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+    .theme-btn:active { transform: scale(0.9); }
     
-    .dashboard { display: flex; justify-content: space-around; text-align: center; font-size: 12px; color: var(--tl); }
-    .dashboard span { display: block; font-size: 16px; font-weight: bold; color: var(--t); margin-top: 2px; }
-    .dashboard .gt { color: var(--g); }
-    .dashboard .clickable { cursor: pointer; padding: 5px; border-radius: 8px; transition: background 0.2s; }
-    .dashboard .clickable:active { background: rgba(128, 128, 128, 0.1); }
+    .dashboard { display: flex; justify-content: space-around; text-align: center; font-size: 13px; color: var(--tl); }
+    .dashboard span { display: block; font-size: 18px; font-weight: 600; color: var(--t); margin-top: 4px; letter-spacing: -0.3px; }
+    .dashboard .clickable { cursor: pointer; padding: 6px 12px; border-radius: 12px; transition: background 0.2s; }
+    .dashboard .clickable:active { background: var(--input-bg); }
 
-    /* ====== 工具栏 ====== */
-    .toolbar { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-    .search-box { flex: 1; min-width: 120px; position: relative; }
-    .search-box input { width: 100%; padding: 10px 15px 10px 35px; border-radius: 12px; border: 1px solid var(--border); background: var(--cbg); color: var(--t); font-size: 14px; outline: none; }
-    .search-box::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+    .toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 140px; position: relative; }
+    .search-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 14px; border: 1px solid var(--border); background: var(--cbg); backdrop-filter: var(--glass-blur); color: var(--t); font-size: 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    .search-box input:focus { border-color: var(--b); box-shadow: 0 0 0 4px var(--bl); }
+    .search-box::before { content: '🔍'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; }
     
-    .btn-f, .btn-r, .btn-s { padding: 10px 15px; border-radius: 12px; font-size: 13px; font-weight: bold; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--cbg); color: var(--t); transition: all 0.2s; white-space: nowrap; }
+    .btn-f, .btn-r, .btn-s { padding: 12px 18px; border-radius: 14px; font-size: 14px; font-weight: 600; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--cbg); backdrop-filter: var(--glass-blur); color: var(--t); transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); white-space: nowrap; }
     .btn-f.ag { background: var(--g); color: #fff; border-color: var(--g); }
     .btn-f.ay { background: var(--y); color: #fff; border-color: var(--y); }
-    .btn-r { background: var(--rl); color: var(--r); border-color: var(--r); }
-    .btn-s { background: var(--bl); color: var(--b); border-color: var(--b); }
-    .btn-f:active, .btn-r:active, .btn-s:active { transform: scale(0.95); }
+    .btn-r { color: var(--r); }
+    .btn-s { color: var(--b); }
+    .btn-f:active, .btn-r:active, .btn-s:active { transform: scale(0.96); opacity: 0.8; }
 
-    /* ====== 悬浮按钮 ====== */
-    .fab { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--r); color: #fff; font-size: 30px; line-height: 60px; text-align: center; box-shadow: 0 6px 16px rgba(255,77,79,0.4); border: 3px solid var(--cbg); cursor: pointer; z-index: 99; transition: transform 0.2s; }
-    .fab:active { transform: scale(0.9); }
+    .fab { position: fixed; bottom: 35px; right: 25px; width: 64px; height: 64px; border-radius: 50%; background: var(--b); color: #fff; font-size: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 28px rgba(0, 122, 255, 0.35); border: none; cursor: pointer; z-index: 99; transition: transform 0.2s, background 0.2s; }
+    .fab:active { transform: scale(0.92); }
 
-    /* ====== 卡片样式 ====== */
-    .card { background: var(--cbg); border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px var(--shadow); border: 1px solid var(--border); overflow: hidden; position: relative; transition: transform 0.2s, opacity 0.2s; }
-    .card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--g); transition: background 0.3s; }
+    .card { background: var(--cbg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: 24px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; position: relative; transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--g); transition: background 0.3s; }
     .card.uc::before { background: var(--r); }
-    .card-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px 18px 25px; cursor: grab; user-select: none; }
-    .site-name { font-size: 18px; font-weight: 800; color: var(--t); }
-    .toggle-icon { font-size: 22px; }
-    .card-body { padding: 0 20px 20px 25px; display: block; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px 20px 24px; cursor: grab; user-select: none; }
+    .site-name { font-size: 17px; font-weight: 700; color: var(--t); letter-spacing: -0.3px; }
+    .toggle-icon { font-size: 18px; background: var(--input-bg); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+    .card-body { padding: 0 22px 22px 24px; display: block; }
     .card.collapsed .card-body { display: none; }
 
-    /* ====== 卡片内部元素 ====== */
-    .link-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 12px; }
-    .site-link { font-size: 13px; color: var(--g); text-decoration: none; background: var(--gl); padding: 6px 12px; border-radius: 8px; font-weight: bold; }
-    .btn-copy { background: var(--input-bg); border: 1px solid var(--border); color: var(--tl); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .link-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
+    .site-link { font-size: 13px; color: var(--b); text-decoration: none; background: var(--bl); padding: 7px 14px; border-radius: 10px; font-weight: 600; transition: opacity 0.2s; }
+    .site-link:active { opacity: 0.7; }
+    .btn-copy { background: var(--input-bg); border: none; color: var(--tl); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: color 0.2s, background 0.2s; }
+    .btn-copy:active { opacity: 0.7; }
     
-    .info-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 10px; }
-    .info-label { color: var(--tl); font-size: 13px; font-weight: bold; }
-    .balance { color: var(--r); font-weight: 900; font-size: 18px; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; }
+    .info-label { color: var(--tl); font-size: 13px; font-weight: 500; }
+    .balance { color: var(--r); font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
 
-    /* 滑动开关 */
-    .switch-container { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .switch-text { font-size: 13px; font-weight: bold; }
+    .switch-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .switch-text { font-size: 13px; font-weight: 600; }
     .switch-text.un { color: var(--r); }
     .switch-text.si { color: var(--g); }
-    .toggle-switch { position: relative; width: 44px; height: 24px; background-color: #666; border-radius: 24px; transition: 0.3s; }
-    .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .toggle-switch { position: relative; width: 48px; height: 28px; background-color: rgba(120, 120, 128, 0.3); border-radius: 28px; transition: 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+    .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background-color: #fff; border-radius: 50%; transition: 0.3s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 3px 8px rgba(0,0,0,0.15); }
     .toggle-switch.active { background-color: var(--g); }
     .toggle-switch.active::after { transform: translateX(20px); }
 
-    /* 充值流水 */
-    .recharge-box { background: var(--yl); border: 1px solid var(--y); border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 13px; color: var(--y); }
-    .recharge-title { font-weight: bold; margin-bottom: 6px; border-bottom: 1px dashed var(--y); padding-bottom: 6px; display: flex; justify-content: space-between; }
-    .recharge-list { display: flex; flex-direction: column; gap: 4px; }
-    .recharge-item { display: flex; justify-content: space-between; font-size: 12px; }
-    .recharge-total { font-weight: bold; color: var(--r); font-size: 14px; }
+    .recharge-box { background: var(--yl); border-radius: 14px; padding: 14px; margin-bottom: 14px; font-size: 13px; color: var(--y); border: 1px solid rgba(255, 149, 0, 0.2); }
+    .recharge-title { font-weight: 600; margin-bottom: 8px; border-bottom: 1px dashed rgba(255, 149, 0, 0.3); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .recharge-list { display: flex; flex-direction: column; gap: 6px; }
+    .recharge-item { display: flex; justify-content: space-between; font-size: 12px; opacity: 0.9; }
+    .recharge-total { font-weight: 700; color: var(--r); font-size: 13px; }
     
-    /* URL / 账号 / QQ / 模型 / 备注 */
-    .url-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .url-box { background: var(--input-bg); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .url-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-    .url-label { font-size: 11px; color: var(--tl); font-weight: bold; margin-bottom: 2px; }
-    .url-text { font-size: 12px; color: var(--t); word-break: break-all; font-family: monospace; }
+    .url-label { font-size: 11px; color: var(--tl); font-weight: 600; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .url-text { font-size: 12px; color: var(--t); word-break: break-all; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     
-    .auth-box { background: var(--bl); border: 1px dashed var(--b); border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .auth-box { background: var(--bl); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(0, 122, 255, 0.15); }
     .auth-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .auth-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-    .auth-label { font-size: 11px; color: var(--b); font-weight: bold; margin-bottom: 2px; }
-    .auth-text { font-size: 13px; color: var(--t); word-break: break-all; font-family: monospace; font-weight: bold; }
-    .btn-eye { background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 0 5px; }
+    .auth-label { font-size: 11px; color: var(--b); font-weight: 600; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .auth-text { font-size: 13px; color: var(--t); word-break: break-all; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; }
+    .btn-eye { background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px; }
     
-    .qq-box { background: var(--bl); border: 1px dashed #91d5ff; border-radius: 12px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .qq-box { background: var(--bl); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid rgba(0, 122, 255, 0.15); }
     .qq-info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-    .qq-label { font-size: 11px; color: var(--b); font-weight: bold; margin-bottom: 2px; display: flex; align-items: center; gap: 4px; }
-    .qq-text { font-size: 14px; color: var(--t); font-weight: bold; font-family: monospace; }
+    .qq-label { font-size: 11px; color: var(--b); font-weight: 600; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .qq-text { font-size: 13px; color: var(--t); font-weight: 600; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     
-    .model-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-    .model-item { background: var(--gl); border: 1px solid var(--g); border-radius: 10px; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .model-name { font-size: 13px; color: var(--g); font-weight: bold; }
-    .model-price { font-size: 12px; color: #fff; font-weight: bold; background: var(--g); padding: 2px 8px; border-radius: 6px; }
+    .model-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .model-item { background: var(--gl); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+    .model-name { font-size: 13px; color: var(--g); font-weight: 600; }
+    .model-price { font-size: 11px; color: #fff; font-weight: 600; background: var(--g); padding: 2px 8px; border-radius: 6px; }
     
-    .remark-box { background: var(--input-bg); border: 1px dashed var(--border); border-radius: 12px; padding: 10px; margin-bottom: 12px; }
-    .remark-label { font-size: 11px; color: var(--tl); font-weight: bold; margin-bottom: 4px; }
+    .remark-box { background: var(--input-bg); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
+    .remark-label { font-size: 11px; color: var(--tl); font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .remark-text { font-size: 12px; color: var(--tl); line-height: 1.5; word-break: break-all; }
 
-    .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-    .btn-small { background: var(--cbg); border: 1px solid var(--border); color: var(--tl); padding: 6px 16px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; }
-    .btn-edit { border-color: var(--g); color: var(--g); }
-    .btn-delete { border-color: var(--r); color: var(--r); }
+    .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+    .btn-small { background: var(--input-bg); border: none; color: var(--tl); padding: 7px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-edit { color: var(--g); background: var(--gl); }
+    .btn-delete { color: var(--r); background: var(--rl); }
+    .btn-small:active { opacity: 0.7; }
 
-    /* ====== 弹窗表单 ====== */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; justify-content: center; align-items: flex-end; }
-    .modal-content { background: var(--cbg); color: var(--t); width: 100%; max-height: 90vh; border-radius: 24px 24px 0 0; padding: 25px; overflow-y: auto; animation: slideUp 0.3s; border-top: 1px solid var(--border); }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 100; justify-content: center; align-items: flex-end; }
+    .modal-content { background: var(--cbg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); color: var(--t); width: 100%; max-height: 88vh; border-radius: 28px 28px 0 0; padding: 24px; overflow-y: auto; animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); border-top: 1px solid var(--border); box-shadow: 0 -20px 40px rgba(0,0,0,0.2); }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 13px; color: var(--tl); margin-bottom: 6px; font-weight: bold; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; outline: none; background: var(--input-bg); color: var(--t); }
-    .form-group input:focus { border-color: var(--g); }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; color: var(--tl); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; outline: none; background: var(--input-bg); color: var(--t); transition: border-color 0.2s, box-shadow 0.2s; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--b); box-shadow: 0 0 0 4px var(--bl); }
     
     .dynamic-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
     .input-model { flex: 2; }
     .input-price { flex: 1; }
-    .btn-remove-model { background: var(--rl); color: var(--r); border: none; padding: 0 15px; border-radius: 10px; font-weight: bold; cursor: pointer; height: 42px; }
-    .btn-add-model { background: var(--gl); color: var(--g); border: 1px dashed var(--g); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 15px; }
+    .btn-remove-model { background: var(--rl); color: var(--r); border: none; padding: 0 14px; border-radius: 10px; font-weight: 600; cursor: pointer; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .btn-add-model { background: var(--gl); color: var(--g); border: none; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; transition: opacity 0.2s; }
+    .btn-add-model:active { opacity: 0.7; }
     
-    .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
-    .btn-cancel { flex: 1; background: var(--input-bg); color: var(--t); border: 1px solid var(--border); padding: 14px; border-radius: 12px; font-size: 15px; font-weight: bold; }
-    .btn-save { flex: 2; background: var(--g); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: bold; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .btn-cancel { flex: 1; background: var(--input-bg); color: var(--t); border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn-save { flex: 2; background: var(--b); color: #fff; border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn-cancel:active, .btn-save:active { opacity: 0.8; }
     
-    .empty-state { text-align: center; color: var(--tl); margin-top: 50px; font-size: 14px; }
+    .empty-state { text-align: center; color: var(--tl); margin-top: 60px; font-size: 15px; font-weight: 500; }
     .hidden { display: none !important; }
-    .dragging { opacity: 0.5; transform: scale(1.02); box-shadow: 0 10px 25px var(--shadow); border: 2px dashed var(--g); }
+    .dragging { opacity: 0.4; transform: scale(0.98); }
 
-    /* 账单专属样式 */
-    .bill-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
-    .bill-total { font-size: 18px; font-weight: 900; color: var(--r); text-align: center; margin: 15px 0; background: var(--rl); padding: 15px; border-radius: 12px; }
+    .bill-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; align-items: center; }
+    .bill-total { font-size: 20px; font-weight: 700; color: var(--r); text-align: center; margin: 15px 0 20px 0; background: var(--rl); padding: 18px; border-radius: 16px; letter-spacing: -0.5px; }
 </style>
 </head>
 <body>
 
-<!-- 顶部看板 -->
 <div class="top-bar">
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     <h1>qiuqiuのapi</h1>
     <div class="dashboard">
-        <!-- 去掉了总余额，增加了待签到 -->
         <div>待签到<span style="color:var(--r)" id="tu">0</span></div>
-        <div class="clickable" onclick="openBillModal()">本月充值<span style="color:var(--b); font-size:16px;" id="monthTotal">0</span></div>
+        <div class="clickable" onclick="openBillModal()">本月充值<span style="color:var(--b)" id="monthTotal">0</span></div>
         <div>总站点<span id="ts">0</span></div>
     </div>
 </div>
 
-<!-- 工具栏 -->
 <div class="toolbar">
     <div class="search-box">
-        <input type="text" id="si" placeholder="搜站点/用户名/模型..." oninput="rs()">
+        <input type="text" id="si" placeholder="搜索站点、用户名、模型..." oninput="rs()">
     </div>
     <button class="btn-f" id="fu" onclick="tf('unsign')">🍏 仅看未签</button>
     <button class="btn-f" id="fr" onclick="tf('recharge')">💰 仅看充值</button>
@@ -189,14 +181,12 @@
     <button class="btn-s" onclick="openSync()">☁️ 同步</button>
 </div>
 
-<!-- 站点列表 -->
 <div id="sl"></div>
 <button class="fab" onclick="openForm()">+</button>
 
-<!-- 账单中心弹窗 -->
 <div class="modal" id="billModal">
     <div class="modal-content">
-        <h2 style="margin-bottom:20px; text-align:center; color:var(--b)">📊 月度充值账单</h2>
+        <h2 style="margin-bottom:20px; text-align:center; color:var(--b); font-size:20px;">📊 月度充值账单</h2>
         <div class="form-group">
             <label>选择要查看的月份：</label>
             <input type="month" id="billMonth" onchange="renderBill()">
@@ -208,30 +198,29 @@
     </div>
 </div>
 
-<!-- 同步数据弹窗 -->
 <div class="modal" id="syncModal">
     <div class="modal-content">
-        <h2 style="margin-bottom:20px; text-align:center; color:var(--b)">☁️ 数据备份与恢复</h2>
-        <div class="form-group" style="border-bottom:2px dashed var(--border); padding-bottom:20px">
-            <label style="color:var(--b); font-size:15px">📤 导出数据</label>
-            <p style="font-size:12px; color:var(--tl); margin-bottom:10px">可以只导出今天新增的站点！</p>
-            <button type="button" class="btn-add-model" style="background:var(--bl); border-color:var(--b); color:var(--b)" onclick="expFile('all')">💾 下载全部文件</button>
-            <button type="button" class="btn-add-model" style="background:var(--gl); border-color:var(--g); color:var(--g)" onclick="expFile('today')">✨ 只下载今天新增的</button>
+        <h2 style="margin-bottom:20px; text-align:center; color:var(--b); font-size:20px;">☁️ 数据备份与恢复</h2>
+        <div class="form-group" style="border-bottom:1px solid var(--border); padding-bottom:20px">
+            <label style="color:var(--b)">📤 导出数据</label>
+            <p style="font-size:12px; color:var(--tl); margin-bottom:12px">可以安全地备份或只导出今天新增的站点！</p>
+            <button type="button" class="btn-add-model" style="background:var(--bl); color:var(--b)" onclick="expFile('all')">💾 下载全部文件备份</button>
+            <button type="button" class="btn-add-model" style="background:var(--gl); color:var(--g)" onclick="expFile('today')">✨ 只下载今天新增的站点</button>
             
-            <label style="margin-top:15px">或者：复制文本</label>
-            <textarea id="expTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:5px" placeholder="生成的文本会显示在这里..."></textarea>
-            <button type="button" class="btn-copy" style="width:100%; padding:10px; margin-bottom:5px; background:var(--bl); border-color:var(--b); color:var(--b)" onclick="expTxt('all')">📋 复制全部文本</button>
-            <button type="button" class="btn-copy" style="width:100%; padding:10px; background:var(--gl); border-color:var(--g); color:var(--g)" onclick="expTxt('today')">📋 复制今天新增文本</button>
+            <label style="margin-top:15px">或者：文本快速复制</label>
+            <textarea id="expTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:8px" placeholder="生成的文本会显示在这里..."></textarea>
+            <button type="button" class="btn-copy" style="width:100%; padding:12px; margin-bottom:6px; background:var(--bl); color:var(--b); border-radius:12px;" onclick="expTxt('all')">📋 复制全部文本</button>
+            <button type="button" class="btn-copy" style="width:100%; padding:12px; background:var(--gl); color:var(--g); border-radius:12px;" onclick="expTxt('today')">📋 复制今天新增文本</button>
         </div>
         <div class="form-group" style="padding-top:10px">
-            <label style="color:var(--g); font-size:15px">📥 导入数据（自动去重合并）</label>
-            <p style="font-size:12px; color:var(--tl); margin-bottom:10px">导入时如果遇到同名的站点会自动跳过，不会重复。</p>
+            <label style="color:var(--g)">📥 导入数据（自动去重合并）</label>
+            <p style="font-size:12px; color:var(--tl); margin-bottom:12px">遇到同名字段自动跳过，安全不覆盖。</p>
             <input type="file" id="impFile" accept=".json" style="display:none" onchange="impFile(event)">
-            <button type="button" class="btn-add-model" style="background:transparent; border-color:var(--g); color:var(--g)" onclick="document.getElementById('impFile').click()">📂 选择文件上传合并</button>
+            <button type="button" class="btn-add-model" style="background:var(--input-bg); color:var(--g); border:1px dashed var(--g)" onclick="document.getElementById('impFile').click()">📂 选择 JSON 文件合并</button>
             
             <label style="margin-top:15px">或者：粘贴文本导入</label>
-            <textarea id="impTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:5px" placeholder="在此粘贴刚才复制的文本..."></textarea>
-            <button type="button" class="btn-add-model" style="background:var(--g); border-color:var(--g); color:#fff" onclick="impTxt()">✅ 确认导入合并</button>
+            <textarea id="impTxt" style="min-height:60px; font-family:monospace; font-size:12px; margin-bottom:8px" placeholder="在此粘贴刚才复制的文本..."></textarea>
+            <button type="button" class="btn-add-model" style="background:var(--g); color:#fff" onclick="impTxt()">✅ 确认导入合并</button>
         </div>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeSync()">关闭</button>
@@ -239,13 +228,12 @@
     </div>
 </div>
 
-<!-- 添加/编辑 弹窗 -->
 <div class="modal" id="formModal">
     <div class="modal-content">
-        <h2 id="mt" style="margin-bottom:20px; text-align:center; color:var(--g)">添加新站点</h2>
+        <h2 id="mt" style="margin-bottom:20px; text-align:center; color:var(--t); font-size:20px;">添加新站点</h2>
         <input type="hidden" id="eid">
         
-        <div class="form-group"><label>站点名称 *</label><input type="text" id="sn" placeholder="例如：某某网"></div>
+        <div class="form-group"><label>站点名称 *</label><input type="text" id="sn" placeholder="例如：某某 API"></div>
         <div class="form-group"><label>站点链接</label><input type="url" id="su" placeholder="https://..."></div>
         
         <div class="form-group">
@@ -263,26 +251,26 @@
         
         <div class="form-group"><label>当前余额</label><input type="text" id="bal" placeholder="例如：25.5"></div>
         
-        <div class="form-group" style="background:var(--yl); padding:15px; border-radius:12px; border:1px solid var(--y)">
+        <div class="form-group" style="background:var(--yl); padding:16px; border-radius:16px; border:1px solid rgba(255,149,0,0.2)">
             <label style="color:var(--y)">💰 充值记录流水</label>
             <div id="rc"></div>
-            <button type="button" class="btn-add-model" style="background:transparent; border-color:var(--y); color:var(--y); margin-top:5px;" onclick="addR()">+ 记录一笔充值</button>
+            <button type="button" class="btn-add-model" style="background:rgba(255,255,255,0.5); color:var(--y); margin-top:8px;" onclick="addR()">+ 记录一笔充值</button>
         </div>
         
-        <div class="form-group" style="background:var(--input-bg); padding:15px; border-radius:12px; margin-bottom:10px">
+        <div class="form-group" style="background:var(--input-bg); padding:16px; border-radius:16px;">
             <label>专属 URL</label>
-            <input type="text" id="cu" placeholder="用于复制" style="background:var(--cbg)">
+            <input type="text" id="cu" placeholder="用于复制的专属链接" style="background:var(--cbg)">
         </div>
         
-        <div class="form-group" style="background:var(--bl); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--b)">
+        <div class="form-group" style="background:var(--bl); padding:16px; border-radius:16px; border:1px solid rgba(0,122,255,0.15)">
             <label style="color:var(--b)">🔐 专属用户名和密码</label>
-            <input type="text" id="au" placeholder="输入用户名" style="background:var(--cbg); margin-bottom:8px; border-color:transparent">
-            <input type="text" id="ap" placeholder="输入密码" style="background:var(--cbg); border-color:transparent">
+            <input type="text" id="au" placeholder="输入用户名" style="background:var(--cbg); margin-bottom:8px;">
+            <input type="text" id="ap" placeholder="输入密码" style="background:var(--cbg);">
         </div>
         
-        <div class="form-group" style="background:var(--bl); padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #91d5ff">
-            <label style="color:var(--b)">🐧 专属 QQ 群号</label>
-            <input type="number" id="qg" placeholder="群号" style="background:var(--cbg); border-color:transparent">
+        <div class="form-group" style="background:var(--bl); padding:16px; border-radius:16px; border:1px solid rgba(0,122,255,0.15)">
+            <label style="color:var(--b)">🐧 官方 QQ 群号</label>
+            <input type="number" id="qg" placeholder="群号" style="background:var(--cbg);">
         </div>
         
         <div class="form-group">
@@ -291,7 +279,7 @@
             <button type="button" class="btn-add-model" onclick="addM()">+ 添加一个模型</button>
         </div>
         
-        <div class="form-group"><label>额外备注</label><textarea id="rm" placeholder="记点什么..."></textarea></div>
+        <div class="form-group"><label>额外备注</label><textarea id="rm" placeholder="记录点什么..."></textarea></div>
         
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeForm()">取消</button>
@@ -301,9 +289,6 @@
 </div>
 
 <script>
-    // ==========================================
-    // 1. 日夜模式自动切换逻辑
-    // ==========================================
     function checkAutoTheme() {
         const hour = new Date().getHours();
         const shouldBeDark = (hour >= 21 || hour < 6);
@@ -323,9 +308,6 @@
         document.getElementById('themeBtn').innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
     }
 
-    // ==========================================
-    // 2. 数据初始化与跨天重置
-    // ==========================================
     let lastVisit = localStorage.getItem('lastVisitDate');
     let today = new Date().toLocaleDateString();
     let sites = JSON.parse(localStorage.getItem('mySitesV17')) || [];
@@ -343,11 +325,7 @@
     let searchKeyword = '';
     let draggedIndex = null;
 
-    // ==========================================
-    // 3. 统计与账单中心 (已修复默认本月显示)
-    // ==========================================
     function updateMonthlyTotal() {
-        // 获取当前系统真实的年月，例如 "2023-11"
         let now = new Date();
         let currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
         
@@ -369,7 +347,6 @@
     function openBillModal() {
         let now = new Date();
         let currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-        // 打开弹窗时，强制把输入框设置为当前月份
         document.getElementById('billMonth').value = currentMonth;
         renderBill();
         document.getElementById('billModal').style.display = 'flex';
@@ -398,11 +375,10 @@
             }
             if (siteTotal > 0) {
                 grandTotal += siteTotal;
-                html += `<div class="bill-row"><span>${site.name}</span><span style="color:var(--r); font-weight:bold;">+${siteTotal.toFixed(1)}</span></div>`;
+                html += `<div class="bill-row"><span>${site.name}</span><span style="color:var(--r); font-weight:600;">+${siteTotal.toFixed(1)}</span></div>`;
             }
         });
         
-        // 解析显示月份（如 "2023-11" 显示为 "2023年11月"）
         let mStr = targetMonth;
         if(targetMonth.includes('-')){
             let parts = targetMonth.split('-');
@@ -418,9 +394,6 @@
         document.getElementById('billContent').innerHTML = content;
     }
 
-    // ==========================================
-    // 4. 同步数据（导入导出）
-    // ==========================================
     function openSync() {
         document.getElementById('expTxt').value = '';
         document.getElementById('impTxt').value = '';
@@ -496,9 +469,6 @@
         catch (e) { alert('❌ 导入失败：文本格式错误'); } 
     }
 
-    // ==========================================
-    // 5. 核心渲染引擎
-    // ==========================================
     function ud() { 
         let tu = 0; 
         sites.forEach(s => { 
@@ -568,7 +538,7 @@
             let sh = '';
             if (site.supportSign === '是') {
                 const si = site.isSigned === '是'; 
-                sh = `<div class="info-row"><span class="info-label">签到状态</span><div class="switch-container" onclick="event.stopPropagation();togS(${index})"><span class="switch-text ${si ? 'si' : 'un'}">${si ? '已签到' : '未签到'}</span><div class="toggle-switch ${si ? 'active' : ''}"></div></div></div>${site.condition ? `<div class="info-row"><span class="info-label">条件</span><span class="info-value" style="color:var(--y)">${site.condition}</span></div>` : ''}`;
+                sh = `<div class="info-row"><span class="info-label">签到状态</span><div class="switch-container" onclick="event.stopPropagation();togS(${index})"><span class="switch-text ${si ? 'si' : 'un'}">${si ? '已签到' : '未签到'}</span><div class="toggle-switch ${si ? 'active' : ''}"></div></div></div>${site.condition ? `<div class="info-row"><span class="info-label">条件</span><span class="info-value" style="color:var(--y); font-weight:600;">${site.condition}</span></div>` : ''}`;
             }
 
             let mh = ''; 
@@ -581,7 +551,7 @@
             
             let ah = (site.accountUser || site.accountPass) ? `<div class="auth-box">${site.accountUser ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔑 用户名</div><div class="auth-text">${site.accountUser}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountUser}',this)">📋 复制</button></div>` : ''}${site.accountPass ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔒 密码</div><div class="auth-text" id="p${index}">••••••</div></div><button class="btn-eye" id="e${index}" onclick="event.stopPropagation();tp(${index})">👁️</button><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountPass}',this)">📋 复制</button></div>` : ''}</div>` : '';
             
-            let qh = site.qqGroup ? `<div class="qq-box"><div class="qq-info"><div class="qq-label">🐧 官方QQ群</div><div class="qq-text">${site.qqGroup}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.qqGroup}',this)">📋 复制群号</button></div>` : '';
+            let qh = site.qqGroup ? `<div class="qq-box"><div class="qq-info"><div class="qq-label">🐧 官方 QQ 群</div><div class="qq-text">${site.qqGroup}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.qqGroup}',this)">📋 复制</button></div>` : '';
 
             let rh = '';
             if (site.recharges && site.recharges.length > 0) {
@@ -599,7 +569,7 @@
                     return `<div class="recharge-item"><span>${r.date || '未知'}</span><span>+${r.amount || 0}</span></div>`;
                 }).join('');
                 
-                let monthTitle = monthTotal > 0 ? `<span style="color:var(--y); font-size:12px; margin-left:10px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
+                let monthTitle = monthTotal > 0 ? `<span style="color:var(--y); font-size:11px; margin-left:8px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
                 rh = `<div class="recharge-box"><div class="recharge-title"><span>💰 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
             }
 
@@ -641,9 +611,6 @@
         ud(); 
     }
 
-    // ==========================================
-    // 6. 拖拽逻辑
-    // ==========================================
     function handleDragStart(e) { 
         draggedIndex = this.getAttribute('data-index'); 
         this.classList.add('dragging'); 
@@ -669,9 +636,6 @@
         draggedIndex = null; 
     }
 
-    // ==========================================
-    // 7. 基础操作与表单保存
-    // ==========================================
     function togS(i) { sites[i].isSigned = sites[i].isSigned === '是' ? '否' : '是'; sd(); rs(); }
     function togC(i) { sites[i].isCollapsed = !sites[i].isCollapsed; sd(); rs(); }
     function cp(t, b) { 
@@ -762,11 +726,8 @@
         } 
     }
 
-    // ==========================================
-    // 8. 启动程序
-    // ==========================================
     rs();
-
 </script>
 </body>
 </html>
+   
