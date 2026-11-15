@@ -7,37 +7,22 @@
 <style>
     /* ====== 核心变量：白天模式 ====== */
     :root {
-        --g: #52c41a; --gl: #f6ffed; 
-        --r: #ff4d4f; --rl: #fff1f0; 
-        --y: #faad14; --yl: #fffbe6; 
-        --b: #12b7f5; --bl: #e6f7ff;
-        --t: #333333; --tl: #888888; 
-        --bg: #f7f9f7; --cbg: #ffffff; 
-        --border: #f0f0f0; --input-bg: #fafafa;
-        --shadow: rgba(0, 0, 0, 0.04);
+        --g: #52c41a; --gl: #f6ffed; --r: #ff4d4f; --rl: #fff1f0; 
+        --y: #faad14; --yl: #fffbe6; --b: #12b7f5; --bl: #e6f7ff;
+        --t: #333333; --tl: #888888; --bg: #f7f9f7; --cbg: #ffffff; 
+        --border: #f0f0f0; --input-bg: #fafafa; --shadow: rgba(0, 0, 0, 0.04);
     }
-
     /* ====== 核心变量：夜间模式 ====== */
     body.dark-mode {
-        --g: #49aa26; --gl: #1a2e16; 
-        --r: #e85a5a; --rl: #2e1616; 
-        --y: #e0a11c; --yl: #2e2516; 
-        --b: #269bd4; --bl: #16272e;
-        --t: #d1d5db; --tl: #9ca3af; 
-        --bg: #111827; --cbg: #1f2937; 
-        --border: #374151; --input-bg: #374151;
-        --shadow: rgba(0, 0, 0, 0.3);
+        --g: #49aa26; --gl: #1a2e16; --r: #e85a5a; --rl: #2e1616; 
+        --y: #e0a11c; --yl: #2e2516; --b: #269bd4; --bl: #16272e;
+        --t: #d1d5db; --tl: #9ca3af; --bg: #111827; --cbg: #1f2937; 
+        --border: #374151; --input-bg: #374151; --shadow: rgba(0, 0, 0, 0.3);
     }
 
     /* ====== 基础布局 ====== */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { 
-        background-color: var(--bg); 
-        background-image: radial-gradient(circle at 0% 0%, rgba(82,196,26,.1) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,77,79,.1) 0, transparent 40%);
-        background-attachment: fixed;
-        color: var(--t); padding: 15px; padding-bottom: 100px; min-height: 100vh; 
-        transition: background-color 0.3s, color 0.3s; 
-    }
+    body { background-color: var(--bg); background-image: radial-gradient(circle at 0% 0%, rgba(82,196,26,.1) 0, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,77,79,.1) 0, transparent 40%); background-attachment: fixed; color: var(--t); padding: 15px; padding-bottom: 100px; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
 
     /* ====== 顶部看板 ====== */
     .top-bar { background: var(--cbg); border-radius: 20px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px var(--shadow); border: 1px solid var(--border); position: relative; }
@@ -171,9 +156,9 @@
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     <h1>qiuqiuのapi</h1>
     <div class="dashboard">
-        <div class="clickable" onclick="openBillModal()">总余额<span class="gt" id="tb">0</span></div>
         <div class="clickable" onclick="openBillModal()">本月充值<span style="color:var(--b); font-size:16px;" id="monthTotal">0</span></div>
         <div>总站点<span id="ts">0</span></div>
+        <div>待签到<span style="color:var(--r)" id="tu">0</span></div>
     </div>
 </div>
 
@@ -315,7 +300,7 @@
         }
     }
     checkAutoTheme();
-    setInterval(checkAutoTheme, 60000); // 每分钟检查一次
+    setInterval(checkAutoTheme, 60000);
 
     function toggleTheme() {
         document.body.classList.toggle('dark-mode');
@@ -343,10 +328,15 @@
     let draggedIndex = null;
 
     // ==========================================
-    // 3. 统计与账单中心
+    // 3. 统计与账单中心 (修复了月份获取的时区Bug)
     // ==========================================
+    function getCurrentMonthStr() {
+        const d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    }
+
     function updateMonthlyTotal() {
-        let currentMonth = new Date().toISOString().slice(0, 7);
+        let currentMonth = getCurrentMonthStr();
         let monthlyTotal = 0;
         sites.forEach(site => {
             if (site.recharges && site.recharges.length > 0) {
@@ -363,7 +353,7 @@
     }
 
     function openBillModal() {
-        document.getElementById('billMonth').value = new Date().toISOString().slice(0, 7);
+        document.getElementById('billMonth').value = getCurrentMonthStr();
         renderBill();
         document.getElementById('billModal').style.display = 'flex';
     }
@@ -486,13 +476,10 @@
     // 5. 核心渲染引擎
     // ==========================================
     function ud() { 
-        let tb = 0, tu = 0; 
+        let tu = 0; 
         sites.forEach(s => { 
-            const b = parseFloat(s.balance); 
-            if (!isNaN(b)) tb += b; 
             if (s.supportSign === '是' && s.isSigned === '否') tu++; 
         }); 
-        document.getElementById('tb').innerText = tb.toFixed(1); 
         document.getElementById('ts').innerText = sites.length; 
         document.getElementById('tu').innerText = tu; 
         updateMonthlyTotal(); 
@@ -551,198 +538,208 @@
             if (currentFilter === 'recharge' && !(site.recharges && site.recharges.length > 0)) return;
 
             let sc = site.name + (site.remark || '') + (site.customUrl || '') + (site.qqGroup || '') + (site.accountUser || '');
-        if (site.foodModels) site.foodModels.forEach(m => { sc += (m.name + m.price); });
-        if (searchKeyword && !sc.toLowerCase().includes(searchKeyword)) return;
+            if (site.foodModels) site.foodModels.forEach(m => { sc += (m.name + m.price);
+            if (searchKeyword && !sc.toLowerCase().includes(searchKeyword)) return;
 
-        let sh = '';
-        if (site.supportSign === '是') {
-            const si = site.isSigned === '是'; 
-            sh = `<div class="info-row"><span class="info-label">签到状态</span><div class="switch-container" onclick="event.stopPropagation();togS(${index})"><span class="switch-text ${si ? 'si' : 'un'}">${si ? '已签到' : '未签到'}</span><div class="toggle-switch ${si ? 'active' : ''}"></div></div></div>${site.condition ? `<div class="info-row"><span class="info-label">条件</span><span class="info-value" style="color:var(--y)">${site.condition}</span></div>` : ''}`;
-        }
+            let sh = '';
+            if (site.supportSign === '是') {
+                const si = site.isSigned === '是'; 
+                sh = `<div class="info-row"><span class="info-label">签到状态</span><div class="switch-container" onclick="event.stopPropagation();togS(${index})"><span class="switch-text ${si ? 'si' : 'un'}">${si ? '已签到' : '未签到'}</span><div class="toggle-switch ${si ? 'active' : ''}"></div></div></div>${site.condition ? `<div class="info-row"><span class="info-label">条件</span><span class="info-value" style="color:var(--y)">${site.condition}</span></div>` : ''}`;
+            }
 
-        let mh = ''; 
-        if (site.foodModels && site.foodModels.length > 0) {
-            const ms = site.foodModels.map(m => `<div class="model-item"><span class="model-name">${m.name}</span>${m.price ? `<span class="model-price">💰 ${m.price}</span>` : ''}</div>`).join(''); 
-            if (ms) mh = `<div class="model-grid">${ms}</div>`;
-        }
+            let mh = ''; 
+            if (site.foodModels && site.foodModels.length > 0) {
+                const ms = site.foodModels.map(m => `<div class="model-item"><span class="model-name">${m.name}</span>${m.price ? `<span class="model-price">💰 ${m.price}</span>` : ''}</div>`).join(''); 
+                if (ms) mh = `<div class="model-grid">${ms}</div>`;
+            }
 
-        let uh = site.customUrl ? `<div class="url-box"><div class="url-info"><div class="url-label">专属 URL</div><div class="url-text">${site.customUrl}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.customUrl}',this)">📋 复制</button></div>` : '';
-        
-        let ah = (site.accountUser || site.accountPass) ? `<div class="auth-box">${site.accountUser ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔑 用户名</div><div class="auth-text">${site.accountUser}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountUser}',this)">📋 复制</button></div>` : ''}${site.accountPass ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔒 密码</div><div class="auth-text" id="p${index}">••••••</div></div><button class="btn-eye" id="e${index}" onclick="event.stopPropagation();tp(${index})">👁️</button><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountPass}',this)">📋 复制</button></div>` : ''}</div>` : '';
-        
-        let qh = site.qqGroup ? `<div class="qq-box"><div class="qq-info"><div class="qq-label">🐧 官方QQ群</div><div class="qq-text">${site.qqGroup}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.qqGroup}',this)">📋 复制群号</button></div>` : '';
+            let uh = site.customUrl ? `<div class="url-box"><div class="url-info"><div class="url-label">专属 URL</div><div class="url-text">${site.customUrl}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.customUrl}',this)">📋 复制</button></div>` : '';
+            
+            let ah = (site.accountUser || site.accountPass) ? `<div class="auth-box">${site.accountUser ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔑 用户名</div><div class="auth-text">${site.accountUser}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountUser}',this)">📋 复制</button></div>` : ''}${site.accountPass ? `<div class="auth-row"><div class="auth-info"><div class="auth-label">🔒 密码</div><div class="auth-text" id="p${index}">••••••</div></div><button class="btn-eye" id="e${index}" onclick="event.stopPropagation();tp(${index})">👁️</button><button class="btn-copy" onclick="event.stopPropagation();cp('${site.accountPass}',this)">📋 复制</button></div>` : ''}</div>` : '';
+            
+            let qh = site.qqGroup ? `<div class="qq-box"><div class="qq-info"><div class="qq-label">🐧 官方QQ群</div><div class="qq-text">${site.qqGroup}</div></div><button class="btn-copy" onclick="event.stopPropagation();cp('${site.qqGroup}',this)">📋 复制群号</button></div>` : '';
 
-        let rh = '';
-        if (site.recharges && site.recharges.length > 0) {
-            let total = 0;
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            let monthTotal = 0;
-            const listItems = site.recharges.map(r => {
-                const amt = parseFloat(r.amount);
-                if (!isNaN(amt)) {
-                    total += amt;
-                    if (r.date && r.date.startsWith(currentMonth)) monthTotal += amt;
-                }
-                return `<div class="recharge-item"><span>${r.date || '未知'}</span><span>+${r.amount || 0}</span></div>`;
-            }).join('');
-            let monthTitle = monthTotal > 0 ? `<span style="color:var(--y); font-size:12px; margin-left:10px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
-            rh = `<div class="recharge-box"><div class="recharge-title"><span>💰 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
-        }
+            let rh = '';
+            if (site.recharges && site.recharges.length > 0) {
+                let total = 0;
+                const currentMonth = getCurrentMonthStr();
+                let monthTotal = 0;
+                const listItems = site.recharges.map(r => {
+                    const amt = parseFloat(r.amount);
+                    if (!isNaN(amt)) {
+                        total += amt;
+                        if (r.date && r.date.startsWith(currentMonth)) monthTotal += amt;
+                    }
+                    return `<div class="recharge-item"><span>${r.date || '未知'}</span><span>+${r.amount || 0}</span></div>`;
+                }).join('');
+                let monthTitle = monthTotal > 0 ? `<span style="color:var(--y); font-size:12px; margin-left:10px;">(本月: ${monthTotal.toFixed(1)})</span>` : '';
+                rh = `<div class="recharge-box"><div class="recharge-title"><span>💰 充值流水 ${monthTitle}</span><span class="recharge-total">总计: ${total.toFixed(1)}</span></div><div class="recharge-list">${listItems}</div></div>`;
+            }
 
-        let rkh = site.remark ? `<div class="remark-box"><div class="remark-label">备注</div><div class="remark-text">${site.remark}</div></div>` : '';
-        
-        const c = document.createElement('div'); 
-        const ic = site.isCollapsed ? 'collapsed' : ''; 
-        const cc = (site.supportSign === '是' && site.isSigned === '否') ? 'uc' : ''; 
-        c.className = `card ${ic} ${cc}`;
+            let rkh = site.remark ? `<div class="remark-box"><div class="remark-label">备注</div><div class="remark-text">${site.remark}</div></div>` : '';
+            
+            const c = document.createElement('div'); 
+            const ic = site.isCollapsed ? 'collapsed' : ''; 
+            const cc = (site.supportSign === '是' && site.isSigned === '否') ? 'uc' : ''; 
+            c.className = `card ${ic} ${cc}`;
 
-        c.setAttribute('draggable', 'true');
-        c.setAttribute('data-index', index);
-        c.addEventListener('dragstart', handleDragStart);
-        c.addEventListener('dragover', handleDragOver);
-        c.addEventListener('drop', handleDrop);
-        c.addEventListener('dragend', handleDragEnd);
+            c.setAttribute('draggable', 'true');
+            c.setAttribute('data-index', index);
+            c.addEventListener('dragstart', handleDragStart);
+            c.addEventListener('dragover', handleDragOver);
+            c.addEventListener('drop', handleDrop);
+            c.addEventListener('dragend', handleDragEnd);
 
-        c.innerHTML = `
-            <div class="card-header" onclick="togC(${index})">
-                <div class="site-name">${site.name}</div>
-                <div class="toggle-icon">${ic ? '🍎' : '🍏'}</div>
-            </div>
-            <div class="card-body">
-                <div class="link-row">
-                    ${site.url ? `<a href="${site.url.startsWith('http') ? site.url : 'https://' + site.url}" target="_blank" class="site-link">🔗 访问</a><button class="btn-copy" onclick="event.stopPropagation();cp('${site.url}',this)">📋 复制</button>` : ''}
+            c.innerHTML = `
+                <div class="card-header" onclick="togC(${index})">
+                    <div class="site-name">${site.name}</div>
+                    <div class="toggle-icon">${ic ? '🍎' : '🍏'}</div>
                 </div>
-                ${sh}
-                <div class="info-row"><span class="info-label">当前余额</span><span class="balance">${site.balance || '0'}</span></div>
-                ${rh}${uh}${ah}${qh}${mh}${rkh}
-                <div class="actions">
-                    <button class="btn-small btn-edit" onclick="event.stopPropagation();edS(${index})">编辑</button>
-                    <button class="btn-small btn-delete" onclick="event.stopPropagation();delS(${index})">删除</button>
-                </div>
-            </div>`;
-        l.appendChild(c); 
-    });
+                <div class="card-body">
+                    <div class="link-row">
+                        ${site.url ? `<a href="${site.url.startsWith('http') ? site.url : 'https://' + site.url}" target="_blank" class="site-link">🔗 访问</a><button class="btn-copy" onclick="event.stopPropagation();cp('${site.url}',this)">📋 复制</button>` : ''}
+                    </div>
+                    ${sh}
+                    <div class="info-row"><span class="info-label">当前余额</span><span class="balance">${site.balance || '0'}</span></div>
+                    ${rh}${uh}${ah}${qh}${mh}${rkh}
+                    <div class="actions">
+                        <button class="btn-small btn-edit" onclick="event.stopPropagation();edS(${index})">编辑</button>
+                        <button class="btn-small btn-delete" onclick="event.stopPropagation();delS(${index})">删除</button>
+                    </div>
+                </div>`;
+            l.appendChild(c); 
+        });
 
-    if (l.innerHTML === '') l.innerHTML = '<div class="empty-state">没有符合条件的站点~</div>'; 
-    ud(); 
-}
+        if (l.innerHTML === '') l.innerHTML = '<div class="empty-state">没有符合条件的站点~</div>'; 
+        ud(); 
+    }
 
-function handleDragStart(e) { 
-    draggedIndex = this.getAttribute('data-index'); 
-    this.classList.add('dragging'); 
-    e.dataTransfer.effectAllowed = 'move'; 
-    e.dataTransfer.setData('text/plain', draggedIndex); 
-}
-function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
-function handleDrop(e) {
-    e.preventDefault();
-    const targetCard = e.target.closest('.card');
-    if (targetCard && draggedIndex !== null) {
-        const targetIndex = targetCard.getAttribute('data-index');
-        if (draggedIndex !== targetIndex) {
-            const draggedItem = sites[draggedIndex];
-            sites.splice(draggedIndex, 1);
-            sites.splice(targetIndex, 0, draggedItem);
-            sd(); rs();
+    // ==========================================
+    // 6. 拖拽逻辑
+    // ==========================================
+    function handleDragStart(e) { 
+        draggedIndex = this.getAttribute('data-index'); 
+        this.classList.add('dragging'); 
+        e.dataTransfer.effectAllowed = 'move'; 
+        e.dataTransfer.setData('text/plain', draggedIndex); 
+    }
+    function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+    function handleDrop(e) {
+        e.preventDefault();
+        const targetCard = e.target.closest('.card');
+        if (targetCard && draggedIndex !== null) {
+            const targetIndex = targetCard.getAttribute('data-index');
+            if (draggedIndex !== targetIndex) {
+                const draggedItem = sites[draggedIndex];
+                sites.splice(draggedIndex, 1);
+                sites.splice(targetIndex, 0, draggedItem);
+                sd(); rs();
+            }
         }
     }
-}
-function handleDragEnd(e) { 
-    document.querySelectorAll('.card').forEach(c => c.classList.remove('dragging')); 
-    draggedIndex = null; 
-}
-
-function togS(i) { sites[i].isSigned = sites[i].isSigned === '是' ? '否' : '是'; sd(); rs(); }
-function togC(i) { sites[i].isCollapsed = !sites[i].isCollapsed; sd(); rs(); }
-function cp(t, b) { 
-    let s = t.startsWith('http') || !t.includes('.') ? t : 'https://' + t; 
-    navigator.clipboard.writeText(s).then(() => { 
-        const o = b.innerHTML; b.innerHTML = '✅ 已复制'; 
-        setTimeout(() => b.innerHTML = o, 1500); 
-    }).catch(() => alert('复制失败')); 
-}
-function sd() { localStorage.setItem('mySitesV17', JSON.stringify(sites)); }
-
-function openForm() {
-    isEditing = false; 
-    document.getElementById('mt').innerText = '添加新站点'; 
-    document.getElementById('eid').value = '';
-    document.getElementById('sn').value = ''; document.getElementById('su').value = ''; document.getElementById('ss').value = '是';
-    document.getElementById('is').value = '否'; document.getElementById('sc').value = ''; document.getElementById('bal').value = '';
-    document.getElementById('cu').value = ''; document.getElementById('au').value = ''; document.getElementById('ap').value = ''; document.getElementById('qg').value = ''; document.getElementById('rm').value = '';
-    document.getElementById('rc').innerHTML = '';
-    document.getElementById('mc').innerHTML = ''; 
-    addM(); tso(); 
-    document.getElementById('formModal').style.display = 'flex';
-}
-function closeForm() { document.getElementById('formModal').style.display = 'none'; }
-
-function saveSite() {
-    const n = document.getElementById('sn').value.trim(); 
-    if (!n) return alert('名称不能为空');
-    
-    const mns = document.querySelectorAll('.mn'), mps = document.querySelectorAll('.mp'), fms = [];
-    for (let i = 0; i < mns.length; i++) { 
-        const mn = mns[i].value.trim(), mp = mps[i].value.trim(); 
-        if (mn || mp) fms.push({name: mn || '未命名', price: mp}); 
+    function handleDragEnd(e) { 
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('dragging')); 
+        draggedIndex = null; 
     }
 
-    const rds = document.querySelectorAll('.r-date'), ras = document.querySelectorAll('.r-amount'), rcs = [];
-    for (let i = 0; i < rds.length; i++) {
-        const d = rds[i].value.trim();
-        const a = ras[i].value.trim();
-        if (d || a) rcs.push({date: d, amount: a});
+    // ==========================================
+    // 7. 基础操作与表单保存
+    // ==========================================
+    function togS(i) { sites[i].isSigned = sites[i].isSigned === '是' ? '否' : '是'; sd(); rs(); }
+    function togC(i) { sites[i].isCollapsed = !sites[i].isCollapsed; sd(); rs(); }
+    function cp(t, b) { 
+        let s = t.startsWith('http') || !t.includes('.') ? t : 'https://' + t; 
+        navigator.clipboard.writeText(s).then(() => { 
+            const o = b.innerHTML; b.innerHTML = '✅ 已复制'; 
+            setTimeout(() => b.innerHTML = o, 1500); 
+        }).catch(() => alert('复制失败')); 
+    }
+    function sd() { localStorage.setItem('mySitesV17', JSON.stringify(sites)); }
+
+    function openForm() {
+        isEditing = false; 
+        document.getElementById('mt').innerText = '添加新站点'; 
+        document.getElementById('eid').value = '';
+        document.getElementById('sn').value = ''; document.getElementById('su').value = ''; document.getElementById('ss').value = '是';
+        document.getElementById('is').value = '否'; document.getElementById('sc').value = ''; document.getElementById('bal').value = '';
+        document.getElementById('cu').value = ''; document.getElementById('au').value = ''; document.getElementById('ap').value = ''; document.getElementById('qg').value = ''; document.getElementById('rm').value = '';
+        document.getElementById('rc').innerHTML = '';
+        document.getElementById('mc').innerHTML = ''; 
+        addM(); tso(); 
+        document.getElementById('formModal').style.display = 'flex';
+    }
+    function closeForm() { document.getElementById('formModal').style.display = 'none'; }
+
+    function saveSite() {
+        const n = document.getElementById('sn').value.trim(); 
+        if (!n) return alert('名称不能为空');
+        
+        const mns = document.querySelectorAll('.mn'), mps = document.querySelectorAll('.mp'), fms = [];
+        for (let i = 0; i < mns.length; i++) { 
+            const mn = mns[i].value.trim(), mp = mps[i].value.trim(); 
+            if (mn || mp) fms.push({name: mn || '未命名', price: mp}); 
+        }
+
+        const rds = document.querySelectorAll('.r-date'), ras = document.querySelectorAll('.r-amount'), rcs = [];
+        for (let i = 0; i < rds.length; i++) {
+            const d = rds[i].value.trim();
+            const a = ras[i].value.trim();
+            if (d || a) rcs.push({date: d, amount: a});
+        }
+
+        const d = {
+            name: n, url: document.getElementById('su').value.trim(), supportSign: document.getElementById('ss').value,
+            isSigned: document.getElementById('is').value, condition: document.getElementById('sc').value.trim(),
+            balance: document.getElementById('bal').value.trim(), recharges: rcs,
+            customUrl: document.getElementById('cu').value.trim(), accountUser: document.getElementById('au').value.trim(),
+            accountPass: document.getElementById('ap').value.trim(), qqGroup: document.getElementById('qg').value.trim(),
+            foodModels: fms, remark: document.getElementById('rm').value.trim(),
+            isCollapsed: isEditing ? sites[document.getElementById('eid').value].isCollapsed : false,
+            createDate: isEditing ? sites[document.getElementById('eid').value].createDate : new Date().toISOString().split('T')[0]
+        };
+        
+        if (isEditing) sites[document.getElementById('eid').value] = d;
+        else sites.push(d);
+        
+        sd(); closeForm(); rs();
     }
 
-    const d = {
-        name: n, url: document.getElementById('su').value.trim(), supportSign: document.getElementById('ss').value,
-        isSigned: document.getElementById('is').value, condition: document.getElementById('sc').value.trim(),
-        balance: document.getElementById('bal').value.trim(), recharges: rcs,
-        customUrl: document.getElementById('cu').value.trim(), accountUser: document.getElementById('au').value.trim(),
-        accountPass: document.getElementById('ap').value.trim(), qqGroup: document.getElementById('qg').value.trim(),
-        foodModels: fms, remark: document.getElementById('rm').value.trim(),
-        isCollapsed: isEditing ? sites[document.getElementById('eid').value].isCollapsed : false,
-        createDate: isEditing ? sites[document.getElementById('eid').value].createDate : new Date().toISOString().split('T')[0]
-    };
-    
-    if (isEditing) sites[document.getElementById('eid').value] = d;
-    else sites.push(d);
-    
-    sd(); closeForm(); rs();
-}
+    function edS(i) {
+        isEditing = true; 
+        const s = sites[i];
+        document.getElementById('mt').innerText = '编辑站点'; 
+        document.getElementById('eid').value = i;
+        document.getElementById('sn').value = s.name; document.getElementById('su').value = s.url || ''; document.getElementById('ss').value = s.supportSign || '是';
+        document.getElementById('is').value = s.isSigned || '否'; document.getElementById('sc').value = s.condition || ''; document.getElementById('bal').value = s.balance || '';
+        document.getElementById('cu').value = s.customUrl || ''; document.getElementById('au').value = s.accountUser || ''; document.getElementById('ap').value = s.accountPass || ''; document.getElementById('qg').value = s.qqGroup || ''; document.getElementById('rm').value = s.remark || '';
 
-function edS(i) {
-    isEditing = true; 
-    const s = sites[i];
-    document.getElementById('mt').innerText = '编辑站点'; 
-    document.getElementById('eid').value = i;
-    document.getElementById('sn').value = s.name; document.getElementById('su').value = s.url || ''; document.getElementById('ss').value = s.supportSign || '是';
-    document.getElementById('is').value = s.isSigned || '否'; document.getElementById('sc').value = s.condition || ''; document.getElementById('bal').value = s.balance || '';
-    document.getElementById('cu').value = s.customUrl || ''; document.getElementById('au').value = s.accountUser || ''; document.getElementById('ap').value = s.accountPass || ''; document.getElementById('qg').value = s.qqGroup || ''; document.getElementById('rm').value = s.remark || '';
+        document.getElementById('rc').innerHTML = '';
+        if (s.recharges && s.recharges.length > 0) {
+            s.recharges.forEach(r => addR(r.date, r.amount));
+        } else if (s.hasRecharge === '是' && s.rechargeAmount) {
+            addR(s.rechargeDate || '', s.rechargeAmount);
+        }
 
-    document.getElementById('rc').innerHTML = '';
-    if (s.recharges && s.recharges.length > 0) {
-        s.recharges.forEach(r => addR(r.date, r.amount));
-    } else if (s.hasRecharge === '是' && s.rechargeAmount) {
-        addR(s.rechargeDate || '', s.rechargeAmount);
+        document.getElementById('mc').innerHTML = '';
+        if (s.foodModels && s.foodModels.length > 0) s.foodModels.forEach(m => addM(m.name, m.price));
+        else addM();
+        
+        tso(); 
+        document.getElementById('formModal').style.display = 'flex';
     }
 
-    document.getElementById('mc').innerHTML = '';
-    if (s.foodModels && s.foodModels.length > 0) s.foodModels.forEach(m => addM(m.name, m.price));
-    else addM();
-    
-    tso(); 
-    document.getElementById('formModal').style.display = 'flex';
-}
+    function delS(i) { 
+        if (confirm('确定删除？')) { 
+            sites.splice(i, 1); 
+            sd(); rs(); 
+        } 
+    }
 
-function delS(i) { 
-    if (confirm('确定删除？')) { 
-        sites.splice(i, 1); 
-        sd(); rs(); 
-    } 
-}
+    // ==========================================
+    // 8. 启动程序
+    // ==========================================
+    rs();
 
-rs();
 </script>
 </body>
 </html>
